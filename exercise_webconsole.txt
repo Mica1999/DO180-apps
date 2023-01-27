@@ -1,0 +1,60 @@
+[student@workstation ~]$ ^C
+[student@workstation ~]$ lab openshift-webconsole start
+
+Setting up workstation for the Guided Exercise: Creating an Application with the Web Console
+
+ Verifying the OpenShift cluster is running:
+ · Log in on OpenShift.........................................  SUCCESS
+ · Check the internal registry is up and running...............  SUCCESS
+ · Ensuring the 'pscfxa-console' project does not exist........  SUCCESS
+
+[student@workstation ~]$ cd ~/DO180-apps
+[student@workstation DO180-apps]$ git checkout master
+Switched to branch 'master'
+Your branch is up to date with 'origin/master'.
+[student@workstation DO180-apps]$ git checkout -b console
+fatal: A branch named 'console' already exists.
+[student@workstation DO180-apps]$ git checkout console
+Switched to branch 'console'
+Your branch is up to date with 'origin/console'.
+[student@workstation DO180-apps]$ cat php-helloworld/index.php 
+<?php
+print "Hello, World! php version is " . PHP_VERSION . "\n";
+?>
+[student@workstation DO180-apps]$ vi php-helloworld/index.php 
+[student@workstation DO180-apps]$ vi php-helloworld/index.php 
+[student@workstation DO180-apps]$ git status
+On branch console
+Your branch is up to date with 'origin/console'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   php-helloworld/index.php
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[student@workstation DO180-apps]$ git add php-helloworld/index.php 
+[student@workstation DO180-apps]$ git commit
+[console 1a1710a] Update index.php
+ 1 file changed, 1 insertion(+)
+[student@workstation DO180-apps]$ git push origin console
+Gtk-Message: 04:01:10.324: Failed to load module "canberra-gtk-module"
+Gtk-Message: 04:01:32.605: Failed to load module "canberra-gtk-module"
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (4/4), 431 bytes | 431.00 KiB/s, done.
+Total 4 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/Mica1999/DO180-apps
+   f7cd896..1a1710a  console -> console
+[student@workstation DO180-apps]$ vi php-helloworld/index.php 
+[student@workstation DO180-apps]$ lab openshift-webconsole finish
+
+Completing the Guided Exercise: Creating an Application with the Web Console
+
+ · Ensure the 'pscfxa-console' project is deleted .............  SUCCESS
+
+[student@workstation DO180-apps]$ 
+
