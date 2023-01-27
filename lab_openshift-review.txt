@@ -1,0 +1,173 @@
+[student@workstation ~]$ lab openshift-review start
+
+Setting up workstation for the Lab: Deploying Containerized Applications on OpenShift
+
+ Verifying the OpenShift cluster is running:
+ · Log in on OpenShift.........................................  SUCCESS
+ · Check the internal registry is up and running...............  SUCCESS
+ · Ensuring the 'pscfxa-ocp' project does not exist............  SUCCESS
+
+[student@workstation ~]$ source /usr/local/etc/ocp4.config
+[student@workstation ~]$ oc login -u ${RHT_OCP4_DEV_USER} -p ${RHT_OCP4_DEV_PASSWORD} ${RHT_OCP4_MASTER_API}
+Login successful.
+
+You have one project on this server: "pscfxa-s2i"
+
+Using project "pscfxa-s2i".
+[student@workstation ~]$ oc new-project pscfxa-ocp
+Now using project "pscfxa-ocp" on server "https://api.eu410.prod.nextcle.com:6443".
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    oc new-app rails-postgresql-example
+
+to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
+
+    kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
+
+[student@workstation ~]$ cd DO180
+DO180/      DO180-apps/ 
+[student@workstation ~]$ cd DO180-apps/
+[student@workstation DO180-apps]$ ls
+example                  nodejs-app         php-helloworld  temps
+exercise_webconsole.txt  nodejs-helloworld  README.md       todoapp
+[student@workstation DO180-apps]$ ls -l
+total 8
+drwxrwxr-x. 2 student student   23 Jan 26 10:59 example
+-rw-rw-r--. 1 student student 2607 Jan 27 04:08 exercise_webconsole.txt
+drwxrwxr-x. 2 student student   43 Jan 26 10:59 nodejs-app
+drwxrwxr-x. 2 student student   40 Jan 26 10:59 nodejs-helloworld
+drwxrwxr-x. 2 student student   23 Jan 27 04:05 php-helloworld
+-rw-rw-r--. 1 student student   54 Jan 26 10:59 README.md
+drwxrwxr-x. 2 student student   23 Jan 26 10:59 temps
+drwxrwxr-x. 5 student student   51 Jan 26 10:59 todoapp
+[student@workstation DO180-apps]$ git status
+On branch console
+Your branch is up to date with 'origin/console'.
+
+nothing to commit, working tree clean
+[student@workstation DO180-apps]$ oc new-app php:7.3~https://github.com/Mica1999/DO180-apps --context-dir temps --name temps
+--> Found image fd2077a (11 months old) in image stream "openshift/php" under tag "7.3" for "php:7.3"
+
+    Apache 2.4 with PHP 7.3 
+    ----------------------- 
+    PHP 7.3 available as container is a base platform for building and running various PHP 7.3 applications and frameworks. PHP is an HTML-embedded scripting language. PHP attempts to make it easy for developers to write dynamically generated web pages. PHP also offers built-in database integration for several commercial and non-commercial database management systems, so writing a database-enabled webpage with PHP is fairly simple. The most common use of PHP coding is probably as a replacement for CGI scripts.
+
+    Tags: builder, php, php73, rh-php73
+
+    * A source build using source code from https://github.com/Mica1999/DO180-apps will be created
+      * The resulting image will be pushed to image stream tag "temps:latest"
+      * Use 'oc start-build' to trigger a new build
+
+--> Creating resources ...
+    imagestream.image.openshift.io "temps" created
+    buildconfig.build.openshift.io "temps" created
+    deployment.apps "temps" created
+    service "temps" created
+--> Success
+    Build scheduled, use 'oc logs -f buildconfig/temps' to track its progress.
+    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
+     'oc expose service/temps' 
+    Run 'oc status' to view your app.
+[student@workstation DO180-apps]$ oc logs -f bc/temps
+Cloning "https://github.com/Mica1999/DO180-apps" ...
+	Commit:	f7cd8963ef353d9173c3a21dcccf402f3616840b (Initial commit, including all apps previously in course)
+	Author:	Jordi Sola <someth2say@gmail.com>
+	Date:	Fri Oct 4 13:04:03 2019 +0200
+time="2023-01-27T09:17:06Z" level=info msg="Not using native diff for overlay, this may cause degraded performance for building images: kernel has CONFIG_OVERLAY_FS_REDIRECT_DIR enabled"
+I0127 09:17:06.496771       1 defaults.go:102] Defaulting to storage driver "overlay" with options [mountopt=metacopy=on].
+Caching blobs under "/var/cache/blobs".
+Trying to pull image-registry.openshift-image-registry.svc:5000/openshift/php@sha256:c649c4d2735cb8e03463b456aee1fa0610d5e80dc00c5efcdab08db83ff6d746...
+Getting image source signatures
+Copying blob sha256:fd3cd11aea08456c116a42669bde7cf67dc6738c227f0dd9b26d4b677e2a98f1
+Copying blob sha256:cafe1f99c39ec8cd1f8e696c7031d8c5756311c1ee87f20c65a816889714841c
+Copying blob sha256:df920f1b41b8f18f9459e1c35abce96ed6a077e4cc77e4583a7af599be965b1b
+Copying blob sha256:a2745c55c3c1fba0208863c387ce5d947a92be3c48577e8436c85b4712546f40
+Copying blob sha256:e0e9ac142996019bde22d55cf51053069e0135f1aae55c9e3bdc77d591c3369b
+Copying config sha256:fd2077affedb833b7b7c930dc7e3b52d9bf1c2add9ce51df1292e0cf18b207b6
+Writing manifest to image destination
+Storing signatures
+Generating dockerfile with builder image image-registry.openshift-image-registry.svc:5000/openshift/php@sha256:c649c4d2735cb8e03463b456aee1fa0610d5e80dc00c5efcdab08db83ff6d746
+Adding transient rw bind mount for /run/secrets/rhsm
+STEP 1/9: FROM image-registry.openshift-image-registry.svc:5000/openshift/php@sha256:c649c4d2735cb8e03463b456aee1fa0610d5e80dc00c5efcdab08db83ff6d746
+STEP 2/9: LABEL "io.openshift.build.commit.date"="Fri Oct 4 13:04:03 2019 +0200"       "io.openshift.build.commit.id"="f7cd8963ef353d9173c3a21dcccf402f3616840b"       "io.openshift.build.commit.ref"="master"       "io.openshift.build.commit.message"="Initial commit, including all apps previously in course"       "io.openshift.build.source-location"="https://github.com/Mica1999/DO180-apps"       "io.openshift.build.source-context-dir"="temps"       "io.openshift.build.image"="image-registry.openshift-image-registry.svc:5000/openshift/php@sha256:c649c4d2735cb8e03463b456aee1fa0610d5e80dc00c5efcdab08db83ff6d746"       "io.openshift.build.commit.author"="Jordi Sola <someth2say@gmail.com>"
+STEP 3/9: ENV OPENSHIFT_BUILD_NAME="temps-1"     OPENSHIFT_BUILD_NAMESPACE="pscfxa-ocp"     OPENSHIFT_BUILD_SOURCE="https://github.com/Mica1999/DO180-apps"     OPENSHIFT_BUILD_COMMIT="f7cd8963ef353d9173c3a21dcccf402f3616840b"
+STEP 4/9: USER root
+STEP 5/9: COPY upload/src /tmp/src
+STEP 6/9: RUN chown -R 1001:0 /tmp/src
+STEP 7/9: USER 1001
+STEP 8/9: RUN /usr/libexec/s2i/assemble
+---> Installing application source...
+=> sourcing 20-copy-config.sh ...
+---> 09:17:24     Processing additional arbitrary httpd configuration provided by s2i ...
+=> sourcing 00-documentroot.conf ...
+=> sourcing 50-mpm-tuning.conf ...
+=> sourcing 40-ssl-certs.sh ...
+STEP 9/9: CMD /usr/libexec/s2i/run
+COMMIT temp.builder.openshift.io/pscfxa-ocp/temps-1:2f78f04f
+time="2023-01-27T09:17:25Z" level=warning msg="Adding metacopy option, configured globally"
+Getting image source signatures
+Copying blob sha256:0b054459c00a34b2b17c5b3c630f25270acb778be3e5c9369185a22d3cf9b42e
+Copying blob sha256:73bf0b1db372c204a79bf1beadf847b1f9873bcdf2c48e4339d8ad292fab6efb
+Copying blob sha256:84b6bd9f4d0c3e2bc727c4fb62701c07b71c5a33e9803c8f5c71d36a8515ade4
+Copying blob sha256:d2ddbf27faca20065be426c2a7140f04899afbd2b811c8cd1bc3fe78b82d1c10
+Copying blob sha256:1df73125d4f4eadf6563bec47f190a8303a5245536abd01848fd9cba5189b60c
+Copying blob sha256:af0373be58c98880c70561562f31cc3d88c822e6722a59dd936252c9d4552052
+Copying config sha256:64ecd6eb1bca377e3eb614f527a4aec6d9803b4a98ce480ff89f8f08e332e8f9
+Writing manifest to image destination
+Storing signatures
+--> 64ecd6eb1bc
+Successfully tagged temp.builder.openshift.io/pscfxa-ocp/temps-1:2f78f04f
+64ecd6eb1bca377e3eb614f527a4aec6d9803b4a98ce480ff89f8f08e332e8f9
+
+Pushing image image-registry.openshift-image-registry.svc:5000/pscfxa-ocp/temps:latest ...
+Getting image source signatures
+Copying blob sha256:af0373be58c98880c70561562f31cc3d88c822e6722a59dd936252c9d4552052
+Copying blob sha256:a2745c55c3c1fba0208863c387ce5d947a92be3c48577e8436c85b4712546f40
+Copying blob sha256:fd3cd11aea08456c116a42669bde7cf67dc6738c227f0dd9b26d4b677e2a98f1
+Copying blob sha256:cafe1f99c39ec8cd1f8e696c7031d8c5756311c1ee87f20c65a816889714841c
+Copying blob sha256:e0e9ac142996019bde22d55cf51053069e0135f1aae55c9e3bdc77d591c3369b
+Copying blob sha256:df920f1b41b8f18f9459e1c35abce96ed6a077e4cc77e4583a7af599be965b1b
+Copying config sha256:64ecd6eb1bca377e3eb614f527a4aec6d9803b4a98ce480ff89f8f08e332e8f9
+Writing manifest to image destination
+Storing signatures
+Successfully pushed image-registry.openshift-image-registry.svc:5000/pscfxa-ocp/temps@sha256:0ebe3ff12309a3af5149b945f12d721743d79cd4fe8cc6834c0c209e6d8beb4f
+Push successful
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc get pods
+NAME                     READY   STATUS      RESTARTS   AGE
+temps-1-build            0/1     Completed   0          49s
+temps-6ccf95fd9f-2rxkt   1/1     Running     0          16s
+[student@workstation DO180-apps]$ oc get pods -w
+NAME                     READY   STATUS      RESTARTS   AGE
+temps-1-build            0/1     Completed   0          52s
+temps-6ccf95fd9f-2rxkt   1/1     Running     0          19s
+^C[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc expose svc/temps
+route.route.openshift.io/temps exposed
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ lab openshift-review grade
+
+Grading the student's work for the Lab: Deploying Containerized Applications on OpenShift
+
+ · Log in on OpenShift.........................................  SUCCESS
+Accessing the web application..................................  PASS
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ lab openshift-review finish
+
+Completing the Lab: Deploying Containerized Applications on OpenShift
+
+ · Log in on OpenShift.........................................  SUCCESS
+ · Deleting the pscfxa-ocp project.............................  SUCCESS
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+
