@@ -1,0 +1,558 @@
+[student@workstation ~]$ lab multicontainer-design start
+
+Setting up workstation for the Guided Exercise: Connecting Web Application and MySQL Container
+
+ · Downloading starter project.................................  SUCCESS
+ · Downloading solution project................................  SUCCESS
+
+Setup successful. Please proceed with the exercise.
+
+[student@workstation ~]$ podman login registry.redhat.io
+Username: laemmerh
+Password: 
+Error: error logging into "registry.redhat.io": invalid username/password
+[student@workstation ~]$ podman login registry.redhat.io
+Username: laemmerh@kapsch.net
+Password: 
+Login Succeeded!
+[student@workstation ~]$ cd DO180
+DO180/      DO180-apps/ 
+[student@workstation ~]$ cd DO180/
+labs/      solutions/ 
+[student@workstation ~]$ cd DO180/
+labs/      solutions/ 
+[student@workstation ~]$ cd DO180/labs/
+dockerfile-create/     dockerfile-review/     multicontainer-design/ 
+[student@workstation ~]$ cd DO180/labs/
+dockerfile-create/     dockerfile-review/     multicontainer-design/ 
+[student@workstation ~]$ cd DO180/labs/multicontainer-design/deploy/nodejs/
+[student@workstation nodejs]$ ls
+build.sh  Containerfile  networked  nodejs-source  run.sh
+[student@workstation nodejs]$ ls -l
+total 12
+-rwxrwxr-x. 1 student student 392 Dec 20 13:17 build.sh
+-rw-rw-r--. 1 student student 232 Dec 20 13:17 Containerfile
+drwxrwxr-x. 2 student student  66 Dec 20 13:17 networked
+drwxrwxr-x. 5 student student 134 Dec 20 13:17 nodejs-source
+-rwxrwxr-x. 1 student student  24 Dec 20 13:17 run.sh
+[student@workstation nodejs]$ vim Containerfile 
+[student@workstation nodejs]$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 52:54:00:00:fa:09 brd ff:ff:ff:ff:ff:ff
+    inet 172.25.250.9/24 brd 172.25.250.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::5054:ff:fe00:fa09/64 scope link 
+       valid_lft forever preferred_lft forever
+3: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    link/ether 52:54:00:19:3b:c5 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.122.1/24 brd 192.168.122.255 scope global virbr0
+       valid_lft forever preferred_lft forever
+[student@workstation nodejs]$ ip -br a
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+eth0             UP             172.25.250.9/24 fe80::5054:ff:fe00:fa09/64 
+virbr0           DOWN           192.168.122.1/24 
+[student@workstation nodejs]$ cat 
+build.sh       Containerfile  networked/     nodejs-source/ run.sh         
+[student@workstation nodejs]$ cat nodejs-source/
+app.js        controllers/  package.json  run.sh        
+compile.sh    models/       README.md     todo/         
+[student@workstation nodejs]$ cat nodejs-source/models/
+db.js     items.js  
+[student@workstation nodejs]$ cat nodejs-source/models/db.js 
+
+module.exports.params = {
+  dbname: process.env.MYSQL_DATABASE,
+  username: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  params: {
+      host: '172.25.250.9',
+      port: '30306',
+      dialect: 'mysql'
+  }
+};
+[student@workstation nodejs]$ vi build.sh 
+[student@workstation nodejs]$ cat /usr/local/etc/ocp4.config
+RHT_OCP4_MASTER_API=https://api.eu410.prod.nextcle.com:6443
+RHT_OCP4_WILDCARD_DOMAIN=apps.eu410.prod.nextcle.com
+RHT_OCP4_NEXUS_SERVER=nexus-common.apps.eu410.prod.nextcle.com
+RHT_OCP4_DEV_USER=pscfxa
+RHT_OCP4_DEV_PASSWORD=2260dcbb069a4d9f9c06
+RHT_OCP4_GITHUB_USER=Mica1999
+RHT_OCP4_QUAY_USER=laemmerh
+[student@workstation nodejs]$ ./build.sh 
+Preparing build folder
+STEP 1/7: FROM registry.redhat.io/rhel8/nodejs-12:1
+Trying to pull registry.redhat.io/rhel8/nodejs-12:1...
+Getting image source signatures
+Checking if image destination supports signatures
+Copying blob 028bdc977650 done  
+Copying blob c37fd7de0840 done  
+Copying blob 1d588d889cb1 done  
+Copying blob 0c673eb68f88 done  
+Copying blob bf105214519e done  
+Copying config 7731b6bf06 done  
+Writing manifest to image destination
+Storing signatures
+STEP 2/7: ARG NEXUS_BASE_URL
+STEP 3/7: MAINTAINER username <username@example.com>
+STEP 4/7: COPY run.sh build ${HOME}/
+STEP 5/7: RUN npm install --registry=http://$NEXUS_BASE_URL/repository/nodejs/
+npm WARN deprecated formidable@1.2.6: Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated sequelize@5.21.1: Please update to v6 or higher! A migration guide can be found here: https://sequelize.org/v6/manual/upgrade-to-v6.html
+
+> dtrace-provider@0.8.8 install /opt/app-root/src/node_modules/dtrace-provider
+> node-gyp rebuild || node suppress-error.js
+
+make: Entering directory '/opt/app-root/src/node_modules/dtrace-provider/build'
+  TOUCH Release/obj.target/DTraceProviderStub.stamp
+make: Leaving directory '/opt/app-root/src/node_modules/dtrace-provider/build'
+npm notice created a lockfile as package-lock.json. You should commit this file.
+added 142 packages from 261 contributors in 5.869s
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+STEP 6/7: EXPOSE	30080
+STEP 7/7: CMD	["./run.sh"]
+COMMIT do180/todonodejs
+Getting image source signatures
+Copying blob 77bf63677b0c skipped: already exists  
+Copying blob 3edb0d97db5c skipped: already exists  
+Copying blob be726aea784e skipped: already exists  
+Copying blob 58e3ebbd44e9 skipped: already exists  
+Copying blob bba19a456517 skipped: already exists  
+Copying blob 32000d61e0c9 done  
+Copying config 38755216e8 done  
+Writing manifest to image destination
+Storing signatures
+--> 38755216e84
+Successfully tagged localhost/do180/todonodejs:latest
+38755216e848238057664bf7cdf88c1b82e6c3ba146fd34e224bbe3698a58466
+[student@workstation nodejs]$ vi build.sh 
+[student@workstation nodejs]$ podman images
+REPOSITORY                          TAG         IMAGE ID      CREATED         SIZE
+localhost/do180/todonodejs          latest      38755216e848  55 seconds ago  910 MB
+registry.redhat.io/rhel8/nodejs-12  1           7731b6bf06a5  7 months ago    846 MB
+[student@workstation nodejs]$ podman images --format "table {{.ID}} {{.Repository}} {{.Tag}}"
+IMAGE ID      REPOSITORY                          TAG
+38755216e848  localhost/do180/todonodejs          latest
+7731b6bf06a5  registry.redhat.io/rhel8/nodejs-12  1
+[student@workstation nodejs]$ ls
+build  build.sh  Containerfile  networked  nodejs-source  run.sh
+[student@workstation nodejs]$ vi networked/
+[student@workstation nodejs]$ vi networked/
+db.sql     README.md  run.sh     stop.sh    
+[student@workstation nodejs]$ vi networked/run.sh 
+[student@workstation nodejs]$ vi networked/run.sh 
+[student@workstation nodejs]$ pwd
+/home/student/DO180/labs/multicontainer-design/deploy/nodejs
+[student@workstation nodejs]$ diff /home/student/DO180/
+labs/      solutions/ 
+[student@workstation nodejs]$ diff /home/student/DO180/solutions/multicontainer-design/deploy/nodejs/networked/
+db.sql     README.md  run.sh     stop.sh    
+[student@workstation nodejs]$ diff /home/student/DO180/solutions/multicontainer-design/deploy/nodejs/networked/run.sh networked/run.sh 
+12a13
+> 
+18,19c19
+< 	registry.redhat.io/rhel8/mysql-80:1
+< 
+---
+> 	registry.redhat.io/rhel8/mysql-80:1registry.redhat.io/rhel8/mysql-80:1
+26c26
+< 	-p 30080:30080 \
+---
+> 	-e MYSQL_PASSWORD=mypa55 \
+27a28,30
+> 
+> sleep 9
+> 
+[student@workstation nodejs]$ vi networked/run.sh 
+[student@workstation nodejs]$ diff /home/student/DO180/solutions/multicontainer-design/deploy/nodejs/networked/run.sh networked/run.sh 
+12a13
+> 
+20d20
+< 
+27a28
+> 
+[student@workstation nodejs]$ cd networked/
+[student@workstation networked]$ ./run.sh 
+Create database volume...
+Trying to pull registry.redhat.io/rhel8/mysql-80:1...
+Getting image source signatures
+Checking if image destination supports signatures
+Copying blob 4f10747ca692 done  
+Copying blob 649e5534d134 done  
+Copying blob 4840bdaf311a done  
+Copying config 241ee35a78 done  
+Writing manifest to image destination
+Storing signatures
+45e24b9e992f951d892e94cdb4b721a5b949d173f173e2626a284771cc72eeb1
+7ca547229e571485357a7a3969edd880152dd657eaae94fa705dfb1885a2e507
+[student@workstation networked]$ podman show
+Error: unrecognized command `podman show`
+
+Did you mean this?
+	stop
+
+Try 'podman --help' for more information.
+[student@workstation networked]$ podman list
+Error: unrecognized command `podman list`
+Try 'podman --help' for more information.
+[student@workstation networked]$ podman pods
+Error: unrecognized command `podman pods`
+
+Did you mean this?
+	logs
+	port
+	ps
+	pod
+
+Try 'podman --help' for more information.
+[student@workstation networked]$ podman pod
+Manage pods
+
+Description:
+  Pods are a group of one or more containers sharing the same network, pid and ipc namespaces.
+
+Usage:
+  podman pod [command]
+
+Available Commands:
+  create      Create a new empty pod
+  exists      Check if a pod exists in local storage
+  inspect     Displays a pod configuration
+  kill        Send the specified signal or SIGKILL to containers in pod
+  logs        Fetch logs for pod with one or more containers
+  pause       Pause one or more pods
+  prune       Remove all stopped pods and their containers
+  ps          List pods
+  restart     Restart one or more pods
+  rm          Remove one or more pods
+  start       Start one or more pods
+  stats       Display a live stream of resource usage statistics for the containers in one or more pods
+  stop        Stop one or more pods
+  top         Display the running processes of containers in a pod
+  unpause     Unpause one or more pods
+
+Error: missing command 'podman pod COMMAND'
+[student@workstation networked]$ podman ps
+CONTAINER ID  IMAGE                                COMMAND     CREATED        STATUS            PORTS                     NAMES
+45e24b9e992f  registry.redhat.io/rhel8/mysql-80:1  run-mysqld  2 minutes ago  Up 2 minutes ago  0.0.0.0:30306->3306/tcp   mysql
+7ca547229e57  localhost/do180/todonodejs:latest    ./run.sh    2 minutes ago  Up 2 minutes ago  0.0.0.0:30080->30080/tcp  todoapi
+[student@workstation networked]$ podman ps --format="table {{.ID}} {{.Names}} {{.Image}} {{.Status}}"
+CONTAINER ID  NAMES       IMAGE                                STATUS
+45e24b9e992f  mysql       registry.redhat.io/rhel8/mysql-80:1  Up 3 minutes ago
+7ca547229e57  todoapi     localhost/do180/todonodejs:latest    Up 3 minutes ago
+[student@workstation networked]$ --format="table {{.ID}} {{.Names}} {{.Image}} {{.Status}}^C
+[student@workstation networked]$ mysql -uuser1 -h 172.25.250.9 \
+> mysql -uuser1 -h 172.25.250.9 \
+> ~/DO180/labs/multicontainer-design/deploy/nodejs/networked/db.sql
+mysql  Ver 8.0.26 for Linux on x86_64 (Source distribution)
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Usage: mysql [OPTIONS] [database]
+  -?, --help          Display this help and exit.
+  -I, --help          Synonym for -?
+  --auto-rehash       Enable automatic rehashing. One doesn't need to use
+                      'rehash' to get table and field completion, but startup
+                      and reconnecting may take a longer time. Disable with
+                      --disable-auto-rehash.
+                      (Defaults to on; use --skip-auto-rehash to disable.)
+  -A, --no-auto-rehash 
+                      No automatic rehashing. One has to use 'rehash' to get
+                      table and field completion. This gives a quicker start of
+                      mysql and disables rehashing on reconnect.
+  --auto-vertical-output 
+                      Automatically switch to vertical output mode if the
+                      result is wider than the terminal width.
+  -B, --batch         Don't use history file. Disable interactive behavior.
+                      (Enables --silent.)
+  --bind-address=name IP address to bind to.
+  --binary-as-hex     Print binary data as hex. Enabled by default for
+                      interactive terminals.
+  --character-sets-dir=name 
+                      Directory for character set files.
+  --column-type-info  Display column type information.
+  -c, --comments      Preserve comments. Send comments to the server. The
+                      default is --skip-comments (discard comments), enable
+                      with --comments.
+  -C, --compress      Use compression in server/client protocol.
+  -#, --debug[=#]     This is a non-debug version. Catch this and exit.
+  --debug-check       This is a non-debug version. Catch this and exit.
+  -T, --debug-info    This is a non-debug version. Catch this and exit.
+  -D, --database=name Database to use.
+  --default-character-set=name 
+                      Set the default character set.
+  --delimiter=name    Delimiter to be used.
+  --enable-cleartext-plugin 
+                      Enable/disable the clear text authentication plugin.
+  -e, --execute=name  Execute command and quit. (Disables --force and history
+                      file.)
+  -E, --vertical      Print the output of a query (rows) vertically.
+  -f, --force         Continue even if we get an SQL error.
+  --histignore=name   A colon-separated list of patterns to keep statements
+                      from getting logged into syslog and mysql history.
+  -G, --named-commands 
+                      Enable named commands. Named commands mean this program's
+                      internal commands; see mysql> help . When enabled, the
+                      named commands can be used from any line of the query,
+                      otherwise only from the first line, before an enter.
+                      Disable with --disable-named-commands. This option is
+                      disabled by default.
+  -i, --ignore-spaces Ignore space after function names.
+  --init-command=name SQL Command to execute when connecting to MySQL server.
+                      Will automatically be re-executed when reconnecting.
+  --local-infile      Enable/disable LOAD DATA LOCAL INFILE.
+  -b, --no-beep       Turn off beep on error.
+  -h, --host=name     Connect to host.
+  --dns-srv-name=name Connect to a DNS SRV resource
+  -H, --html          Produce HTML output.
+  -X, --xml           Produce XML output.
+  --line-numbers      Write line numbers for errors.
+                      (Defaults to on; use --skip-line-numbers to disable.)
+  -L, --skip-line-numbers 
+                      Don't write line number for errors.
+  -n, --unbuffered    Flush buffer after each query.
+  --column-names      Write column names in results.
+                      (Defaults to on; use --skip-column-names to disable.)
+  -N, --skip-column-names 
+                      Don't write column names in results.
+  --sigint-ignore     Ignore SIGINT (CTRL-C).
+  -o, --one-database  Ignore statements except those that occur while the
+                      default database is the one named at the command line.
+  --pager[=name]      Pager to use to display results. If you don't supply an
+                      option, the default pager is taken from your ENV variable
+                      PAGER. Valid pagers are less, more, cat [> filename],
+                      etc. See interactive help (\h) also. This option does not
+                      work in batch mode. Disable with --disable-pager. This
+                      option is disabled by default.
+  -p, --password[=name] 
+                      Password to use when connecting to server. If password is
+                      not given it's asked from the tty.
+  -P, --port=#        Port number to use for connection or 0 for default to, in
+                      order of preference, my.cnf, $MYSQL_TCP_PORT,
+                      /etc/services, built-in default (3306).
+  --prompt=name       Set the mysql prompt to this value.
+  --protocol=name     The protocol to use for connection (tcp, socket, pipe,
+                      memory).
+  -q, --quick         Don't cache result, print it row by row. This may slow
+                      down the server if the output is suspended. Doesn't use
+                      history file.
+  -r, --raw           Write fields without conversion. Used with --batch.
+  --reconnect         Reconnect if the connection is lost. Disable with
+                      --disable-reconnect. This option is enabled by default.
+                      (Defaults to on; use --skip-reconnect to disable.)
+  -s, --silent        Be more silent. Print results with a tab as separator,
+                      each row on new line.
+  -S, --socket=name   The socket file to use for connection.
+  --server-public-key-path=name 
+                      File path to the server public RSA key in PEM format.
+  --get-server-public-key 
+                      Get server public key
+  --ssl-mode=name     SSL connection mode.
+  --ssl-ca=name       CA file in PEM format.
+  --ssl-capath=name   CA directory.
+  --ssl-cert=name     X509 cert in PEM format.
+  --ssl-cipher=name   SSL cipher to use.
+  --ssl-key=name      X509 key in PEM format.
+  --ssl-crl=name      Certificate revocation list.
+  --ssl-crlpath=name  Certificate revocation list path.
+  --tls-version=name  TLS version to use, permitted values are: TLSv1, TLSv1.1,
+                      TLSv1.2, TLSv1.3
+  --ssl-fips-mode=name 
+                      SSL FIPS mode (applies only for OpenSSL); permitted
+                      values are: OFF, ON, STRICT
+  --tls-ciphersuites=name 
+                      TLS v1.3 cipher to use.
+  -t, --table         Output in table format.
+  --tee=name          Append everything into outfile. See interactive help (\h)
+                      also. Does not work in batch mode. Disable with
+                      --disable-tee. This option is disabled by default.
+  -u, --user=name     User for login if not current user.
+  -U, --safe-updates  Only allow UPDATE and DELETE that uses keys.
+  -U, --i-am-a-dummy  Synonym for option --safe-updates, -U.
+  -v, --verbose       Write more. (-v -v -v gives the table output format).
+  -V, --version       Output version information and exit.
+  -w, --wait          Wait and retry if connection is down.
+  --connect-timeout=# Number of seconds before connection timeout.
+  --max-allowed-packet=# 
+                      The maximum packet length to send to or receive from
+                      server.
+  --net-buffer-length=# 
+                      The buffer size for TCP/IP and socket communication.
+  --select-limit=#    Automatic limit for SELECT when using --safe-updates.
+  --max-join-size=#   Automatic limit for rows in a join when using
+                      --safe-updates.
+  --show-warnings     Show warnings after every statement.
+  -j, --syslog        Log filtered interactive commands to syslog. Filtering of
+                      commands depends on the patterns supplied via histignore
+                      option besides the default patterns.
+  --plugin-dir=name   Directory for client-side plugins.
+  --default-auth=name Default authentication client-side plugin to use.
+  --binary-mode       By default, ASCII '\0' is disallowed and '\r\n' is
+                      translated to '\n'. This switch turns off both features,
+                      and also turns off parsing of all clientcommands except
+                      \C and DELIMITER, in non-interactive mode (for input
+                      piped to mysql or loaded using the 'source' command).
+                      This is necessary when processing output from mysqlbinlog
+                      that may contain blobs.
+  --connect-expired-password 
+                      Notify the server that this client is prepared to handle
+                      expired password sandbox mode.
+  --network-namespace=name 
+                      Network namespace to use for connection via tcp with a
+                      server.
+  --compression-algorithms=name 
+                      Use compression algorithm in server/client protocol.
+                      Valid values are any combination of
+                      'zstd','zlib','uncompressed'.
+  --zstd-compression-level=# 
+                      Use this compression level in the client/server protocol,
+                      in case --compression-algorithms=zstd. Valid range is
+                      between 1 and 22, inclusive. Default is 3.
+  --load-data-local-dir=name 
+                      Directory path safe for LOAD DATA LOCAL INFILE to read
+                      from.
+
+Default options are read from the following files in the given order:
+/etc/my.cnf /etc/mysql/my.cnf ~/.my.cnf 
+The following groups are read: mysql client
+The following options may be given as the first argument:
+--print-defaults        Print the program argument list and exit.
+--no-defaults           Don't read default options from any option file,
+                        except for login file.
+--defaults-file=#       Only read default options from the given file #.
+--defaults-extra-file=# Read this file after the global files are read.
+--defaults-group-suffix=#
+                        Also read groups with concat(group, suffix)
+--login-path=#          Read this path from the login file.
+
+Variables (--variable-name=value)
+and boolean options {FALSE|TRUE}  Value (after reading options)
+--------------------------------- ----------------------------------------
+auto-rehash                       TRUE
+auto-vertical-output              FALSE
+bind-address                      (No default value)
+binary-as-hex                     FALSE
+character-sets-dir                (No default value)
+column-type-info                  FALSE
+comments                          FALSE
+compress                          FALSE
+database                          (No default value)
+default-character-set             auto
+delimiter                         ;
+enable-cleartext-plugin           FALSE
+vertical                          FALSE
+force                             FALSE
+histignore                        (No default value)
+named-commands                    FALSE
+ignore-spaces                     FALSE
+init-command                      (No default value)
+local-infile                      FALSE
+no-beep                           FALSE
+host                              172.25.250.9
+dns-srv-name                      (No default value)
+html                              FALSE
+xml                               FALSE
+line-numbers                      TRUE
+unbuffered                        FALSE
+column-names                      TRUE
+sigint-ignore                     FALSE
+port                              0
+prompt                            mysql> 
+quick                             FALSE
+raw                               FALSE
+reconnect                         TRUE
+socket                            (No default value)
+server-public-key-path            (No default value)
+get-server-public-key             FALSE
+ssl-ca                            (No default value)
+ssl-capath                        (No default value)
+ssl-cert                          (No default value)
+ssl-cipher                        (No default value)
+ssl-key                           (No default value)
+ssl-crl                           (No default value)
+ssl-crlpath                       (No default value)
+tls-version                       (No default value)
+tls-ciphersuites                  (No default value)
+table                             FALSE
+user                              user1
+safe-updates                      FALSE
+i-am-a-dummy                      FALSE
+connect-timeout                   0
+max-allowed-packet                16777216
+net-buffer-length                 16384
+select-limit                      1000
+max-join-size                     1000000
+show-warnings                     FALSE
+plugin-dir                        (No default value)
+default-auth                      (No default value)
+binary-mode                       FALSE
+connect-expired-password          FALSE
+network-namespace                 (No default value)
+compression-algorithms            (No default value)
+zstd-compression-level            3
+load-data-local-dir               (No default value)
+[student@workstation networked]$ mysql -uuser1 -h 172.25.250.9 -pmypa55 -P30306 items < ~/DO180/labs/multicontainer-design/deploy/nodejs/networked/db.sql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+[student@workstation networked]$ podman exec -it todoapi env
+CNB_STACK_ID=com.redhat.stacks.ubi8-nodejs-12
+CNB_USER_ID=1001
+MYSQL_DATABASE=items
+HOME=/opt/app-root/src
+NAME=nodejs
+DESCRIPTION=Node.js 12 available as container is a base platform for building and running various Node.js 12 applications and frameworks. Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.
+STI_SCRIPTS_URL=image:///usr/libexec/s2i
+CNB_GROUP_ID=0
+PATH=/opt/app-root/src/node_modules/.bin/:/opt/app-root/src/.npm-global/bin/:/opt/app-root/src/bin:/opt/app-root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+STI_SCRIPTS_PATH=/usr/libexec/s2i
+NPM_RUN=start
+APP_ROOT=/opt/app-root
+NPM_CONFIG_PREFIX=/opt/app-root/src/.npm-global
+NODEJS_VER=14
+MYSQL_USER=user1
+MYSQL_PASSWORD=mypa55
+TERM=xterm
+container=oci
+NODEJS_VERSION=12
+PLATFORM=el8
+SUMMARY=Platform for building and running Node.js 12 applications
+[student@workstation networked]$ curl -w "\n" http://127.0.0.1:30080/todo/api/items/1
+{"id":1,"description":"Pick up newspaper","done":false}
+[student@workstation networked]$ cd 
+[student@workstation ~]$ pwd
+/home/student
+[student@workstation ~]$ lab multicontainer-design finish
+
+Cleaning up the lab for Guided Exercise: Connecting Web Application and MySQL Container
+
+ · Stopping mysql container....................................  SUCCESS
+ · Removing mysql container....................................  SUCCESS
+ · Stopping todoapi container..................................  SUCCESS
+ · Removing todoapi container..................................  SUCCESS
+ · Removing registry.redhat.io/rhel8/mysql-80:1 image..........  SUCCESS
+ · Removing registry.redhat.io/rhel8/nodejs-12:1 image.........  SUCCESS
+ · Removing do180/todonodejs image.............................  SUCCESS
+ · Removing the project directory..............................  SUCCESS
+ · Removing the solution directory.............................  SUCCESS
+[student@workstation ~]$ pwd
+/home/student
+[student@workstation ~]$ cd DO180
+[student@workstation DO180]$ ls
+labs  solutions
+[student@workstation DO180]$ git status
+fatal: not a git repository (or any of the parent directories): .git
+[student@workstation DO180]$ cd ..
+[student@workstation ~]$ 
+
