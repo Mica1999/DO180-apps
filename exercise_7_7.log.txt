@@ -1,0 +1,247 @@
+[student@workstation ~]$ cd ~/DO180/labs/multicontainer-openshift
+[student@workstation multicontainer-openshift]$ ls
+db.sql  todo-template.json
+[student@workstation multicontainer-openshift]$ cat todo-template.json 
+{
+  "kind": "Template",
+  "apiVersion": "template.openshift.io/v1",
+  "metadata": {
+    "name": "todonodejs-persistent",
+    "annotations": {
+      "openshift.io/display-name": "TODO Application NodeJS 12.0 and MySQL 8"
+    }
+  },
+  "message": "",
+  "labels": {
+    "template": "todonodejs-mysql-persistent-template",
+    "app": "todonodejs"
+  },
+  "objects": [
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "mysql",
+        "labels": {
+          "name": "mysql"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "image": "registry.redhat.io/rhel8/mysql-80:1",
+            "name": "mysql",
+            "env": [
+              {
+                "name": "MYSQL_ROOT_PASSWORD",
+                "value": "r00tpa55"
+              },
+              {
+                "name": "MYSQL_USER",
+                "value": "user1"
+              },
+              {
+                "name": "MYSQL_PASSWORD",
+                "value": "mypa55"
+              },
+              {
+                "name": "MYSQL_DATABASE",
+                "value": "items"
+              }
+            ],
+            "ports": [
+              {
+                "containerPort": 3306,
+                "name": "mysql"
+              }
+            ],
+            "volumeMounts": [
+              {
+                "mountPath": "/var/lib/mysql/data",
+                "name": "db-volume"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "db-volume",
+            "persistentVolumeClaim": {
+              "claimName": "dbclaim"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "todoapi",
+        "labels": {
+          "name": "todoapi"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "resources": {
+              "limits" : {
+                "cpu": "0.5"
+              }
+            },
+            "image": "quay.io/redhattraining/do180-todonodejs-12",
+            "name": "todoapi",
+            "ports": [
+              {
+                "containerPort": 30080,
+                "name": "nodejs-http"
+              }
+            ],
+            "env": [
+              {
+                "name": "MYSQL_ENV_MYSQL_DATABASE",
+                "value": "items"
+              },
+              {
+                "name": "MYSQL_ENV_MYSQL_USER",
+                "value": "user1"
+              },
+              {
+                "name": "MYSQL_ENV_MYSQL_PASSWORD",
+                "value": "mypa55"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "labels": {
+          "name": "todoapi"
+        },
+        "name": "todoapi"
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": 30080
+          }
+        ],
+        "selector": {
+          "name": "todoapi"
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "labels": {
+          "name": "mysql"
+        },
+        "name": "mysql"
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": 3306
+          }
+        ],
+        "selector": {
+          "name": "mysql"
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "dbclaim"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10Mi"
+          }
+        }
+      }
+    }
+  ]
+}
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ oc process -f todo-template.json  | oc create -f -
+pod/mysql created
+pod/todoapi created
+service/todoapi created
+service/mysql created
+persistentvolumeclaim/dbclaim created
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ oc get pods 
+NAME      READY   STATUS    RESTARTS   AGE
+mysql     1/1     Running   0          31s
+todoapi   1/1     Running   0          31s
+[student@workstation multicontainer-openshift]$ oc get pods -w
+NAME      READY   STATUS    RESTARTS   AGE
+mysql     1/1     Running   0          35s
+todoapi   1/1     Running   0          35s
+^C[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ oc port-forward mysql 3306:3306
+Forwarding from 127.0.0.1:3306 -> 3306
+Forwarding from [::1]:3306 -> 3306
+
+Handling connection for 3306
+^C[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ oc expose service todoapi
+route.route.openshift.io/todoapi exposed
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ oc status
+In project pscfxa-template on server https://api.eu410.prod.nextcle.com:6443
+
+svc/mysql - 172.30.168.13:3306
+  pod/mysql runs registry.redhat.io/rhel8/mysql-80:1
+
+http://todoapi-pscfxa-template.apps.eu410.prod.nextcle.com to pod port 30080 (svc/todoapi)
+  pod/todoapi runs quay.io/redhattraining/do180-todonodejs-12
+
+View details with 'oc describe <resource>/<name>' or list resources with 'oc get all'.
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ curl -w "\n" http://todoapi-pscfxa-template.apps.eu410.prod.nextcle.com/todo/api/items/1
+{"id":1,"description":"Pick up newspaper","done":false}
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ 
+[student@workstation multicontainer-openshift]$ cd 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ lab multicontainer-openshift finish
+
+Completing the Guided Exercise: Creating an Application with a Template
+
+ · Log in on OpenShift.........................................  SUCCESS
+ · Removing pscfxa-template project............................  SUCCESS
+ · Removing the project directory..............................  SUCCESS
+ · Removing the solution directory.............................  SUCCESS
+[student@workstation ~]$ 
+
