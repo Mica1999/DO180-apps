@@ -1,0 +1,1151 @@
+[student@workstation ~]$ lab multicontainer-review start
+/usr/local/lib/labtool.do180.shlib: line 54: /usr/local/etc/ocp4.config: No such file or directory
+/usr/local/lib/labtool.do180.shlib: line 54: /usr/local/etc/ocp4.config: No such file or directory
+
+Setting up workstation for the Lab: Deploying Multi-container Applications
+
+ · Setting up labs folder......................................  SUCCESS
+ · Setting up solutions folder.................................  SUCCESS
+ · Downloading starter project.................................  SUCCESS
+ · Downloading solution project................................  SUCCESS
+
+Setup successful. Please proceed with the exercise.
+
+ Verifying the OpenShift cluster is running:
+ · Log in on OpenShift.........................................  FAIL
+
+You need to perform GE "Configuring the Classroom Environment" before starting any exercise.
+[student@workstation ~]$ git config --global credential.helper 'cache --timeout=3600'
+[student@workstation ~]$ lab-configure
+
+This script configures the connection parameters to access the OpenShift cluster for your lab scripts
+
+ · Enter the API Endpoint: https://api.eu410.prod.nextcle.com:6443
+ · Enter the Username: qclrrk
+ · Enter the Password: 23c3c14ab7de4df8b420
+ · Enter the GitHub Account Name: Mica1999
+ · Enter the Quay.io Account Name: laemmerh
+
+You entered:
+ · API Endpoint:			https://api.eu410.prod.nextcle.com:6443
+ · Username:				qclrrk
+ · Password:				23c3c14ab7de4df8b420
+ · GitHub Account Name:			Mica1999
+ · Quay.io Account Name:		laemmerh
+
+Generated config:
+ · API Endpoint:			https://api.eu410.prod.nextcle.com:6443
+ · Wildcard Domain:			apps.eu410.prod.nextcle.com
+ · Nexus Server Host:			nexus-common.apps.eu410.prod.nextcle.com
+ · Username:				qclrrk
+ · Password:				23c3c14ab7de4df8b420
+ · GitHub Account Name:			Mica1999
+ · Quay.io Account Name:		laemmerh
+
+Verifying your API Endpoint...
+
+Verifying your Nexus host...
+
+Verifying your OpenShift developer user credentials...
+
+Verifying your GitHub account name...
+
+Verifying your Quay.io account name...
+
+Verifying your cluster configuration...
+
+Saving your lab configuration file...
+
+All fine, lab config saved. You can now proceed with your exercises.
+
+If you need to modify the configuration, rerun this script or directly modify the values in /usr/local/etc/ocp4.config.
+
+[student@workstation ~]$ lab multicontainer-review start
+
+Setting up workstation for the Lab: Deploying Multi-container Applications
+
+Exercise is already setup.
+ Verifying the OpenShift cluster is running:
+ · Log in on OpenShift.........................................  SUCCESS
+ · Check the internal registry is up and running...............  SUCCESS
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ cd ~/DO180/labs/multicontainer-review
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ source /usr/local/etc/ocp4.config
+[student@workstation multicontainer-review]$ cat /usr/local/etc/ocp4.config
+RHT_OCP4_MASTER_API=https://api.eu410.prod.nextcle.com:6443
+RHT_OCP4_WILDCARD_DOMAIN=apps.eu410.prod.nextcle.com
+RHT_OCP4_NEXUS_SERVER=nexus-common.apps.eu410.prod.nextcle.com
+RHT_OCP4_DEV_USER=qclrrk
+RHT_OCP4_DEV_PASSWORD=23c3c14ab7de4df8b420
+RHT_OCP4_GITHUB_USER=Mica1999
+RHT_OCP4_QUAY_USER=laemmerh
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc login -u qclrrk -p 23c3c14ab7de4df8b420 https://api.eu410.prod.nextcle.com:6443
+Login successful.
+
+You don't have any projects. You can try to create a new project, by running
+
+    oc new-project <projectname>
+
+[student@workstation multicontainer-review]$ oc new-project qclrrk-deploy
+Now using project "qclrrk-deploy" on server "https://api.eu410.prod.nextcle.com:6443".
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    oc new-app rails-postgresql-example
+
+to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
+
+    kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
+
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ podman login registry.redhat.io
+Username: laemmerh@kapsch.net
+Password: 
+Login Succeeded!
+[student@workstation multicontainer-review]$ cd images/mysql/
+[student@workstation mysql]$ ls
+build.sh  Containerfile  delete.sh  README.md  root  test  test.sh
+[student@workstation mysql]$ podman build -t do180-mysql-80-rhel8 .
+STEP 1/4: FROM registry.redhat.io/rhel8/mysql-80:1
+Trying to pull registry.redhat.io/rhel8/mysql-80:1...
+Getting image source signatures
+Checking if image destination supports signatures
+Copying blob ea0a20a2c448 done  
+Copying blob 1eb1cc491a1b done  
+Copying blob cae0dd0bf64a done  
+Copying config ae055a002c done  
+Writing manifest to image destination
+Storing signatures
+STEP 2/4: MAINTAINER username <username@example.com>
+--> 7e0ad1563fb
+STEP 3/4: RUN echo "default_authentication_plugin = mysql_native_password" >> /etc/my.cnf
+--> 1c92d815e0b
+STEP 4/4: ADD root /
+COMMIT do180-mysql-80-rhel8
+--> 6532ba64fef
+Successfully tagged localhost/do180-mysql-80-rhel8:latest
+6532ba64fefac775aa79e56510859fbfb2cdab3dd5a2280f5a46c73ebd117d9e
+[student@workstation mysql]$ podman login quay.io -u laemmerh
+Password: 
+Login Succeeded!
+[student@workstation mysql]$ podman tag do180-mysql-80-rhel8 quay.io/laemmerh/do180-mysql-80-rhel8
+[student@workstation mysql]$ podman push quay.io/laemmerh/do180-mysql-80-rhel8
+Getting image source signatures
+Copying blob be1c063ce095 done  
+Copying blob b46c06bdfb56 done  
+Copying blob 5de674694847 done  
+Copying blob 4ab945fc3fa9 done  
+Copying blob 43b721c5b5bb done  
+Copying config 6532ba64fe done  
+Writing manifest to image destination
+Storing signatures
+[student@workstation mysql]$ cd ..
+[student@workstation images]$ cd ..
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ cd images/quote-php/
+[student@workstation quote-php]$ ls
+build.sh  Containerfile  index.php  quote.sql
+[student@workstation quote-php]$ podman build -t do180-quote-php .
+STEP 1/7: FROM registry.access.redhat.com/ubi8/ubi
+Trying to pull registry.access.redhat.com/ubi8/ubi:latest...
+Getting image source signatures
+Checking if image destination supports signatures
+Copying blob ea0a20a2c448 skipped: already exists  
+Copying config 55e87c8c55 done  
+Writing manifest to image destination
+Storing signatures
+STEP 2/7: RUN yum --disableplugin=subscription-manager -y module enable php:7.2   && yum --disableplugin=subscription-manager -y install httpd php php-mysqlnd   && yum --disableplugin=subscription-manager clean all
+Red Hat Universal Base Image 8 (RPMs) - BaseOS  1.6 MB/s | 837 kB     00:00    
+Red Hat Universal Base Image 8 (RPMs) - AppStre  25 MB/s | 3.2 MB     00:00    
+Red Hat Universal Base Image 8 (RPMs) - CodeRea 463 kB/s |  30 kB     00:00    
+Dependencies resolved.
+================================================================================
+ Package           Architecture     Version             Repository         Size
+================================================================================
+Enabling module streams:
+ httpd                              2.4                                        
+ nginx                              1.14                                       
+ php                                7.2                                        
+
+Transaction Summary
+================================================================================
+
+Complete!
+Last metadata expiration check: 0:00:01 ago on Mon Feb 20 08:28:10 2023.
+Dependencies resolved.
+=================================================================================================
+ Package              Arch    Version                                 Repository             Size
+=================================================================================================
+Installing:
+ httpd                x86_64  2.4.37-51.module+el8.7.0+16050+02173b8e ubi-8-appstream-rpms  1.4 M
+ php                  x86_64  7.2.24-1.module+el8.2.0+4601+7c76a223   ubi-8-appstream-rpms  1.5 M
+ php-mysqlnd          x86_64  7.2.24-1.module+el8.2.0+4601+7c76a223   ubi-8-appstream-rpms  191 k
+Installing dependencies:
+ apr                  x86_64  1.6.3-12.el8                            ubi-8-appstream-rpms  130 k
+ apr-util             x86_64  1.6.1-6.el8                             ubi-8-appstream-rpms  105 k
+ httpd-filesystem     noarch  2.4.37-51.module+el8.7.0+16050+02173b8e ubi-8-appstream-rpms   42 k
+ httpd-tools          x86_64  2.4.37-51.module+el8.7.0+16050+02173b8e ubi-8-appstream-rpms  109 k
+ libedit              x86_64  3.1-23.20170329cvs.el8                  ubi-8-baseos-rpms     102 k
+ mailcap              noarch  2.1.48-3.el8                            ubi-8-baseos-rpms      39 k
+ mod_http2            x86_64  1.15.7-5.module+el8.6.0+13996+01710940  ubi-8-appstream-rpms  155 k
+ nginx-filesystem     noarch  1:1.14.1-9.module+el8.0.0+4108+af250afe ubi-8-appstream-rpms   24 k
+ php-cli              x86_64  7.2.24-1.module+el8.2.0+4601+7c76a223   ubi-8-appstream-rpms  3.1 M
+ php-common           x86_64  7.2.24-1.module+el8.2.0+4601+7c76a223   ubi-8-appstream-rpms  662 k
+ php-pdo              x86_64  7.2.24-1.module+el8.2.0+4601+7c76a223   ubi-8-appstream-rpms  123 k
+ redhat-logos-httpd   noarch  84.5-1.el8                              ubi-8-baseos-rpms      29 k
+Installing weak dependencies:
+ apr-util-bdb         x86_64  1.6.1-6.el8                             ubi-8-appstream-rpms   25 k
+ apr-util-openssl     x86_64  1.6.1-6.el8                             ubi-8-appstream-rpms   27 k
+ php-fpm              x86_64  7.2.24-1.module+el8.2.0+4601+7c76a223   ubi-8-appstream-rpms  1.6 M
+
+Transaction Summary
+=================================================================================================
+Install  18 Packages
+
+Total download size: 9.4 M
+Installed size: 32 M
+Downloading Packages:
+(1/18): redhat-logos-httpd-84.5-1.el8.noarch.rp 845 kB/s |  29 kB     00:00    
+(2/18): libedit-3.1-23.20170329cvs.el8.x86_64.r 2.6 MB/s | 102 kB     00:00    
+(3/18): mailcap-2.1.48-3.el8.noarch.rpm         984 kB/s |  39 kB     00:00    
+(4/18): apr-1.6.3-12.el8.x86_64.rpm              21 MB/s | 130 kB     00:00    
+(5/18): apr-util-openssl-1.6.1-6.el8.x86_64.rpm 9.0 MB/s |  27 kB     00:00    
+(6/18): apr-util-1.6.1-6.el8.x86_64.rpm          18 MB/s | 105 kB     00:00    
+(7/18): php-common-7.2.24-1.module+el8.2.0+4601  48 MB/s | 662 kB     00:00    
+(8/18): apr-util-bdb-1.6.1-6.el8.x86_64.rpm     4.0 MB/s |  25 kB     00:00    
+(9/18): mod_http2-1.15.7-5.module+el8.6.0+13996 9.2 MB/s | 155 kB     00:00    
+(10/18): php-mysqlnd-7.2.24-1.module+el8.2.0+46 3.9 MB/s | 191 kB     00:00    
+(11/18): httpd-tools-2.4.37-51.module+el8.7.0+1  19 MB/s | 109 kB     00:00    
+(12/18): php-fpm-7.2.24-1.module+el8.2.0+4601+7  21 MB/s | 1.6 MB     00:00    
+(13/18): httpd-2.4.37-51.module+el8.7.0+16050+0  48 MB/s | 1.4 MB     00:00    
+(14/18): httpd-filesystem-2.4.37-51.module+el8.  13 MB/s |  42 kB     00:00    
+(15/18): nginx-filesystem-1.14.1-9.module+el8.0 4.7 MB/s |  24 kB     00:00    
+(16/18): php-pdo-7.2.24-1.module+el8.2.0+4601+7 4.7 MB/s | 123 kB     00:00    
+(17/18): php-7.2.24-1.module+el8.2.0+4601+7c76a  23 MB/s | 1.5 MB     00:00    
+(18/18): php-cli-7.2.24-1.module+el8.2.0+4601+7  18 MB/s | 3.1 MB     00:00    
+--------------------------------------------------------------------------------
+Total                                            40 MB/s | 9.4 MB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : php-common-7.2.24-1.module+el8.2.0+4601+7c76a223.x    1/18 
+  Running scriptlet: httpd-filesystem-2.4.37-51.module+el8.7.0+16050+02    2/18 
+  Installing       : httpd-filesystem-2.4.37-51.module+el8.7.0+16050+02    2/18 
+  Installing       : apr-1.6.3-12.el8.x86_64                               3/18 
+  Running scriptlet: apr-1.6.3-12.el8.x86_64                               3/18 
+  Installing       : apr-util-openssl-1.6.1-6.el8.x86_64                   4/18 
+  Installing       : apr-util-bdb-1.6.1-6.el8.x86_64                       5/18 
+  Installing       : apr-util-1.6.1-6.el8.x86_64                           6/18 
+  Running scriptlet: apr-util-1.6.1-6.el8.x86_64                           6/18 
+  Installing       : httpd-tools-2.4.37-51.module+el8.7.0+16050+02173b8    7/18 
+  Installing       : php-pdo-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_    8/18 
+  Running scriptlet: nginx-filesystem-1:1.14.1-9.module+el8.0.0+4108+af    9/18 
+  Installing       : nginx-filesystem-1:1.14.1-9.module+el8.0.0+4108+af    9/18 
+  Installing       : php-fpm-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_   10/18 
+  Running scriptlet: php-fpm-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_   10/18 
+  Installing       : mailcap-2.1.48-3.el8.noarch                          11/18 
+  Installing       : redhat-logos-httpd-84.5-1.el8.noarch                 12/18 
+  Installing       : mod_http2-1.15.7-5.module+el8.6.0+13996+01710940.x   13/18 
+  Installing       : httpd-2.4.37-51.module+el8.7.0+16050+02173b8e.x86_   14/18 
+  Running scriptlet: httpd-2.4.37-51.module+el8.7.0+16050+02173b8e.x86_   14/18 
+  Installing       : libedit-3.1-23.20170329cvs.el8.x86_64                15/18 
+  Installing       : php-cli-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_   16/18 
+  Installing       : php-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64     17/18 
+  Installing       : php-mysqlnd-7.2.24-1.module+el8.2.0+4601+7c76a223.   18/18 
+  Running scriptlet: httpd-2.4.37-51.module+el8.7.0+16050+02173b8e.x86_   18/18 
+  Running scriptlet: php-mysqlnd-7.2.24-1.module+el8.2.0+4601+7c76a223.   18/18 
+  Running scriptlet: php-fpm-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_   18/18 
+  Verifying        : libedit-3.1-23.20170329cvs.el8.x86_64                 1/18 
+  Verifying        : redhat-logos-httpd-84.5-1.el8.noarch                  2/18 
+  Verifying        : mailcap-2.1.48-3.el8.noarch                           3/18 
+  Verifying        : apr-1.6.3-12.el8.x86_64                               4/18 
+  Verifying        : php-common-7.2.24-1.module+el8.2.0+4601+7c76a223.x    5/18 
+  Verifying        : apr-util-1.6.1-6.el8.x86_64                           6/18 
+  Verifying        : apr-util-openssl-1.6.1-6.el8.x86_64                   7/18 
+  Verifying        : mod_http2-1.15.7-5.module+el8.6.0+13996+01710940.x    8/18 
+  Verifying        : apr-util-bdb-1.6.1-6.el8.x86_64                       9/18 
+  Verifying        : php-mysqlnd-7.2.24-1.module+el8.2.0+4601+7c76a223.   10/18 
+  Verifying        : php-fpm-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_   11/18 
+  Verifying        : php-cli-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_   12/18 
+  Verifying        : httpd-tools-2.4.37-51.module+el8.7.0+16050+02173b8   13/18 
+  Verifying        : httpd-2.4.37-51.module+el8.7.0+16050+02173b8e.x86_   14/18 
+  Verifying        : php-pdo-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_   15/18 
+  Verifying        : httpd-filesystem-2.4.37-51.module+el8.7.0+16050+02   16/18 
+  Verifying        : nginx-filesystem-1:1.14.1-9.module+el8.0.0+4108+af   17/18 
+  Verifying        : php-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64     18/18 
+Installed products updated.
+
+Installed:
+  apr-1.6.3-12.el8.x86_64                                                       
+  apr-util-1.6.1-6.el8.x86_64                                                   
+  apr-util-bdb-1.6.1-6.el8.x86_64                                               
+  apr-util-openssl-1.6.1-6.el8.x86_64                                           
+  httpd-2.4.37-51.module+el8.7.0+16050+02173b8e.x86_64                          
+  httpd-filesystem-2.4.37-51.module+el8.7.0+16050+02173b8e.noarch               
+  httpd-tools-2.4.37-51.module+el8.7.0+16050+02173b8e.x86_64                    
+  libedit-3.1-23.20170329cvs.el8.x86_64                                         
+  mailcap-2.1.48-3.el8.noarch                                                   
+  mod_http2-1.15.7-5.module+el8.6.0+13996+01710940.x86_64                       
+  nginx-filesystem-1:1.14.1-9.module+el8.0.0+4108+af250afe.noarch               
+  php-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64                              
+  php-cli-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64                          
+  php-common-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64                       
+  php-fpm-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64                          
+  php-mysqlnd-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64                      
+  php-pdo-7.2.24-1.module+el8.2.0+4601+7c76a223.x86_64                          
+  redhat-logos-httpd-84.5-1.el8.noarch                                          
+
+Complete!
+25 files removed
+--> 095cb93cb73
+STEP 3/7: ADD index.php /var/www/html
+--> b7a92a2df1e
+STEP 4/7: RUN sed -i 's/Listen 80/Listen 8080/' /etc/httpd/conf/httpd.conf   && sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"/' /etc/php.ini   && sed -i 's/;clear_env/clear_env/' /etc/php-fpm.d/www.conf    && mkdir /run/php-fpm   && chgrp -R 0 /var/log/httpd /var/run/httpd /run/php-fpm   && chmod -R g=u /var/log/httpd /var/run/httpd /run/php-fpm
+--> dc8d3d1da87
+STEP 5/7: EXPOSE 8080
+--> d0f3f85ddd5
+STEP 6/7: USER 1001
+--> b51381d9da5
+STEP 7/7: CMD php-fpm & httpd -D FOREGROUND
+COMMIT do180-quote-php
+--> 63106264964
+Successfully tagged localhost/do180-quote-php:latest
+6310626496464ed1f8e0e3f8d49ded65f3ad2706c5d9c2129182421bbc432a85
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ podman tag do180-quote-php quay.io/laemmerh/do180-quote-php
+[student@workstation quote-php]$ podman tag push quay.io/laemmerh/do180-quote-php
+Error: push: image not known
+[student@workstation quote-php]$ podman push quay.io/laemmerh/do180-quote-php
+Getting image source signatures
+Copying blob a4d7012a864f [--------------------------------------] 8.0b / 7.0KiB
+Copying blob 4e9469045de0 [--------------------------------------] 8.0b / 110.0KiB
+Copying blob 172d90b10f62 [--------------------------------------] 8.0b / 48.3MiB
+Copying blob 4ab945fc3fa9 skipped: already exists  
+Error: writing blob: initiating layer upload to /v2/laemmerh/do180-quote-php/blobs/uploads/ in quay.io: unauthorized: access to the requested resource is not authorized
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ podman tag push quay.io/laemmerh/do180-quote-php
+Error: push: image not known
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ podman tag push quay.io/laemmerh/do180-quote-php
+Error: push: image not known
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ 
+[student@workstation quote-php]$ podman tag do180-quote-php quay.io/laemmerh/do180-quote-php
+[student@workstation quote-php]$ podman push quay.io/laemmerh/do180-quote-php
+Getting image source signatures
+Copying blob a4d7012a864f done  
+Copying blob 4e9469045de0 done  
+Copying blob 172d90b10f62 done  
+Copying blob 4ab945fc3fa9 skipped: already exists  
+Copying config 6310626496 done  
+Writing manifest to image destination
+Storing signatures
+[student@workstation quote-php]$ cd ..
+[student@workstation images]$ cd ..
+[student@workstation multicontainer-review]$ ls
+images  quote-php-template.json
+[student@workstation multicontainer-review]$ cat quote-php-template.json 
+{
+  "kind": "Template",
+  "apiVersion": "template.openshift.io/v1",
+  "metadata": {
+    "name": "quote-php-persistent",
+    "annotations": {
+      "openshift.io/display-name": "Quote PHP Application and MySQL 8"
+    }
+  },
+  "message": "",
+  "labels": {
+    "template": "quote-php-mysql-persistent-template",
+    "app": "quote-php"
+  },
+  "objects": [
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "mysql",
+        "labels": {
+          "name": "mysql"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "image": "quay.io/${RHT_OCP4_QUAY_USER}/do180-mysql-80-rhel8",
+            "name": "mysql",
+            "env": [
+              {
+                "name": "MYSQL_ROOT_PASSWORD",
+                "value": "r00tpa55"
+              },
+              {
+                "name": "MYSQL_USER",
+                "value": "user1"
+              },
+              {
+                "name": "MYSQL_PASSWORD",
+                "value": "mypa55"
+              },
+              {
+                "name": "MYSQL_DATABASE",
+                "value": "quotes"
+              }
+            ],
+            "ports": [
+              {
+                "containerPort": 3306,
+                "name": "mysql"
+              }
+            ],
+            "volumeMounts": [
+              {
+                "mountPath": "/var/lib/mysql/data",
+                "name": "db-volume"
+              },
+              {
+                "mountPath": "/var/lib/mysql/init",
+                "name": "db-init"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "db-volume",
+            "persistentVolumeClaim": {
+              "claimName": "dbclaim"
+            }
+          },
+          {
+            "name": "db-init",
+            "persistentVolumeClaim": {
+              "claimName": "dbinit"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "quote-php",
+        "labels": {
+          "name": "quote-php"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "resources": {
+              "limits" : {
+                "cpu": "0.5"
+              }
+            },
+            "image": "quay.io/${RHT_OCP4_QUAY_USER}/do180-quote-php",
+            "name": "quote-php",
+            "ports": [
+              {
+                "containerPort": 8080,
+                "name": "php-http"
+              }
+            ],
+            "env": [
+              {
+                "name": "MYSQL_ENV_MYSQL_DATABASE",
+                "value": "items"
+              },
+              {
+                "name": "MYSQL_ENV_MYSQL_USER",
+                "value": "user1"
+              },
+              {
+                "name": "MYSQL_ENV_MYSQL_PASSWORD",
+                "value": "mypa55"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "labels": {
+          "name": "quote-php"
+        },
+        "name": "quote-php"
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": 8080
+          }
+        ],
+        "selector": {
+          "name": "quote-php"
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "labels": {
+          "name": "mysql"
+        },
+        "name": "mysql"
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": 3306
+          }
+        ],
+        "selector": {
+          "name": "mysql"
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "dbinit"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Mi"
+          }
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "dbclaim"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10Mi"
+          }
+        }
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "description": "Quay namespace the images are stored in",
+      "name": "RHT_OCP4_QUAY_USER",
+      "required": true
+    }
+  ]
+}
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc create -f quote-php-template.json 
+template.template.openshift.io/quote-php-persistent created
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc process quote-php-persistent -p RHT_OCP4_QUAY_USER=laemmerh | oc create -f -
+pod/mysql created
+pod/quote-php created
+service/quote-php created
+service/mysql created
+persistentvolumeclaim/dbinit created
+persistentvolumeclaim/dbclaim created
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc get pods -w
+NAME        READY   STATUS             RESTARTS   AGE
+mysql       0/1     ErrImagePull       0          23s
+quote-php   0/1     ImagePullBackOff   0          23s
+mysql       0/1     ImagePullBackOff   0          28s
+quote-php   0/1     ErrImagePull       0          32s
+mysql       0/1     ErrImagePull       0          41s
+quote-php   0/1     ImagePullBackOff   0          47s
+mysql       0/1     ImagePullBackOff   0          55s
+quote-php   0/1     ErrImagePull       0          60s
+mysql       0/1     ErrImagePull       0          71s
+quote-php   0/1     ImagePullBackOff   0          74s
+mysql       0/1     ImagePullBackOff   0          85s
+quote-php   0/1     ErrImagePull       0          103s
+mysql       0/1     ErrImagePull       0          114s
+^C[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ ls
+images  quote-php-template.json
+[student@workstation multicontainer-review]$ oc show
+error: unknown command "show" for "oc"
+[student@workstation multicontainer-review]$ oc list
+error: unknown command "list" for "oc"
+
+Did you mean this?
+	get
+	wait
+[student@workstation multicontainer-review]$ oc get pods
+NAME        READY   STATUS             RESTARTS   AGE
+mysql       0/1     ImagePullBackOff   0          2m50s
+quote-php   0/1     ImagePullBackOff   0          2m50s
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc project
+Using project "qclrrk-deploy" on server "https://api.eu410.prod.nextcle.com:6443".
+[student@workstation multicontainer-review]$ oc status
+In project qclrrk-deploy on server https://api.eu410.prod.nextcle.com:6443
+
+svc/mysql - 172.30.235.71:3306
+  pod/mysql runs quay.io/laemmerh/do180-mysql-80-rhel8
+
+svc/quote-php - 172.30.230.55:8080
+  pod/quote-php runs quay.io/laemmerh/do180-quote-php
+
+View details with 'oc describe <resource>/<name>' or list resources with 'oc get all'.
+[student@workstation multicontainer-review]$ oc get all
+NAME            READY   STATUS             RESTARTS   AGE
+pod/mysql       0/1     ImagePullBackOff   0          7m15s
+pod/quote-php   0/1     ImagePullBackOff   0          7m15s
+
+NAME                TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/mysql       ClusterIP   172.30.235.71   <none>        3306/TCP   7m15s
+service/quote-php   ClusterIP   172.30.230.55   <none>        8080/TCP   7m15s
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc create -f quote-php-template.json 
+Error from server (AlreadyExists): error when creating "quote-php-template.json": templates.template.openshift.io "quote-php-persistent" already exists
+[student@workstation multicontainer-review]$ vi quote-php-template.json 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc process --help
+Process template into a list of resources specified in a file name or stdin.
+
+ Templates allow parameterization of resources prior to being sent to the server for creation or
+update. Templates have "parameters", which may either be generated on creation or set by the user,
+as well as metadata describing the template.
+
+ The output of the process command is always a list of one or more resources. You may pipe the
+output to the create command over STDIN (using the '-f -' option) or redirect it to a file.
+
+ Process resolves the template on the server, but you may pass --local to parameterize the template
+locally. When running locally be aware that the version of your client tools will determine what
+template transformations are supported, rather than the server.
+
+Usage:
+  oc process (TEMPLATE | -f FILENAME) [-p=KEY=VALUE] [flags]
+
+Examples:
+  # Convert the template.json file into a resource list and pass to create
+  oc process -f template.json | oc create -f -
+  
+  # Process a file locally instead of contacting the server
+  oc process -f template.json --local -o yaml
+  
+  # Process template while passing a user-defined label
+  oc process -f template.json -l name=mytemplate
+  
+  # Convert a stored template into a resource list
+  oc process foo
+  
+  # Convert a stored template into a resource list by setting/overriding parameter values
+  oc process foo PARM1=VALUE1 PARM2=VALUE2
+  
+  # Convert a template stored in different namespace into a resource list
+  oc process openshift//foo
+  
+  # Convert template.json into a resource list
+  cat template.json | oc process -f -
+
+Options:
+      --allow-missing-template-keys=true: If true, ignore any errors in templates when a field or
+map key is missing in the template. Only applies to golang and jsonpath output formats.
+  -f, --filename='': Filename or URL to file to read a template
+      --ignore-unknown-parameters=false: If true, will not stop processing if a provided parameter
+does not exist in the template.
+  -l, --labels='': Label to set in all resources for this template
+      --local=false: If true process the template locally instead of contacting the server.
+  -o, --output='json': Output format. One of:
+json|yaml|name|describe|go-template-file|templatefile|template|go-template|jsonpath|jsonpath-file.
+  -p, --param=[]: Specify a key-value pair (eg. -p FOO=BAR) to set/override a parameter value in the
+template.
+      --param-file=[]: File containing template parameter values to set/override in the template.
+      --parameters=false: If true, do not process but only print available parameters
+      --raw=false: If true, output the processed template instead of the template's objects. Implied
+by -o describe
+      --show-managed-fields=false: If true, keep the managedFields when printing objects in JSON or
+YAML format.
+      --template='': Template string or path to template file to use when -o=go-template,
+-o=go-template-file. The template format is golang templates
+[http://golang.org/pkg/text/template/#pkg-overview].
+
+Use "oc options" for a list of global command-line options (applies to all commands).
+[student@workstation multicontainer-review]$ vi quote-php-template.json 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc process quote-php-template.json -p RHT_OCP4_QUAY_USER=laemmerh | oc create -f -
+error: template "quote-php-template.json" could not be found
+error: no objects passed to create
+[student@workstation multicontainer-review]$ ls
+images  quote-php-template.json
+[student@workstation multicontainer-review]$ oc process quote-php-persistent -p RHT_OCP4_QUAY_USER=laemmerh | oc create -f -
+Error from server (AlreadyExists): error when creating "STDIN": pods "mysql" already exists
+Error from server (AlreadyExists): error when creating "STDIN": pods "quote-php" already exists
+Error from server (AlreadyExists): error when creating "STDIN": services "quote-php" already exists
+Error from server (AlreadyExists): error when creating "STDIN": services "mysql" already exists
+Error from server (AlreadyExists): error when creating "STDIN": persistentvolumeclaims "dbinit" already exists
+Error from server (AlreadyExists): error when creating "STDIN": persistentvolumeclaims "dbclaim" already exists
+[student@workstation multicontainer-review]$ oc get pods
+NAME        READY   STATUS             RESTARTS   AGE
+mysql       0/1     ImagePullBackOff   0          15m
+quote-php   0/1     ImagePullBackOff   0          15m
+[student@workstation multicontainer-review]$ oc get pods -w
+NAME        READY   STATUS             RESTARTS   AGE
+mysql       0/1     ImagePullBackOff   0          15m
+quote-php   0/1     ImagePullBackOff   0          15m
+^C[student@workstation multicontainer-review]$ lab multicontainer-review grade
+
+Grading the student's work for Lab: Deploying Multi-container Applications
+
+• Accessing Quotes web application.............................  FAIL
+   --> Could not access route at: quote-php-qclrrk-deploy.apps.eu410.prod.nextcle.com
+
+[student@workstation multicontainer-review]$ oc describe pod mysql
+Name:         mysql
+Namespace:    qclrrk-deploy
+Priority:     0
+Node:         eu410-x8btt-worker-0-8pnk6/10.0.3.72
+Start Time:   Mon, 20 Feb 2023 03:38:27 -0500
+Labels:       app=quote-php
+              name=mysql
+              template=quote-php-mysql-persistent-template
+Annotations:  k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "openshift-sdn",
+                    "interface": "eth0",
+                    "ips": [
+                        "10.130.2.86"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "openshift-sdn",
+                    "interface": "eth0",
+                    "ips": [
+                        "10.130.2.86"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+              kubernetes.io/limit-ranger: LimitRanger plugin set: cpu, memory request for container mysql; cpu, memory limit for container mysql
+              openshift.io/scc: restricted
+Status:       Pending
+IP:           10.130.2.86
+IPs:
+  IP:  10.130.2.86
+Containers:
+  mysql:
+    Container ID:   
+    Image:          quay.io/laemmerh/do180-mysql-80-rhel8
+    Image ID:       
+    Port:           3306/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  2Gi
+    Requests:
+      cpu:     5m
+      memory:  50Mi
+    Environment:
+      MYSQL_ROOT_PASSWORD:  r00tpa55
+      MYSQL_USER:           user1
+      MYSQL_PASSWORD:       mypa55
+      MYSQL_DATABASE:       quotes
+    Mounts:
+      /var/lib/mysql/data from db-volume (rw)
+      /var/lib/mysql/init from db-init (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-4tcrt (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             False 
+  ContainersReady   False 
+  PodScheduled      True 
+Volumes:
+  db-volume:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  dbclaim
+    ReadOnly:   false
+  db-init:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  dbinit
+    ReadOnly:   false
+  kube-api-access-4tcrt:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+    ConfigMapName:           openshift-service-ca.crt
+    ConfigMapOptional:       <nil>
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/memory-pressure:NoSchedule op=Exists
+                             node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason                  Age                   From                     Message
+  ----     ------                  ----                  ----                     -------
+  Warning  FailedScheduling        18m                   default-scheduler        0/11 nodes are available: 11 persistentvolumeclaim "dbclaim" not found.
+  Normal   Scheduled               17m                   default-scheduler        Successfully assigned qclrrk-deploy/mysql to eu410-x8btt-worker-0-8pnk6
+  Normal   SuccessfulAttachVolume  17m                   attachdetach-controller  AttachVolume.Attach succeeded for volume "pvc-d0871c08-6eb8-45fe-a9c3-1ab7ea66c3e8"
+  Normal   SuccessfulAttachVolume  17m                   attachdetach-controller  AttachVolume.Attach succeeded for volume "pvc-1d0e968f-b749-4908-8afe-d32a8500a168"
+  Normal   AddedInterface          17m                   multus                   Add eth0 [10.130.2.86/23] from openshift-sdn
+  Normal   Pulling                 16m (x4 over 17m)     kubelet                  Pulling image "quay.io/laemmerh/do180-mysql-80-rhel8"
+  Warning  Failed                  16m (x4 over 17m)     kubelet                  Failed to pull image "quay.io/laemmerh/do180-mysql-80-rhel8": rpc error: code = Unknown desc = reading manifest latest in quay.io/laemmerh/do180-mysql-80-rhel8: unauthorized: access to the requested resource is not authorized
+  Warning  Failed                  16m (x4 over 17m)     kubelet                  Error: ErrImagePull
+  Warning  Failed                  15m (x6 over 17m)     kubelet                  Error: ImagePullBackOff
+  Normal   BackOff                 2m41s (x64 over 17m)  kubelet                  Back-off pulling image "quay.io/laemmerh/do180-mysql-80-rhel8"
+[student@workstation multicontainer-review]$ cat /usr/local/etc/ocp4.config
+RHT_OCP4_MASTER_API=https://api.eu410.prod.nextcle.com:6443
+RHT_OCP4_WILDCARD_DOMAIN=apps.eu410.prod.nextcle.com
+RHT_OCP4_NEXUS_SERVER=nexus-common.apps.eu410.prod.nextcle.com
+RHT_OCP4_DEV_USER=qclrrk
+RHT_OCP4_DEV_PASSWORD=23c3c14ab7de4df8b420
+RHT_OCP4_GITHUB_USER=Mica1999
+RHT_OCP4_QUAY_USER=laemmerh
+[student@workstation multicontainer-review]$ oc get pods -w
+NAME        READY   STATUS             RESTARTS   AGE
+mysql       0/1     ImagePullBackOff   0          31m
+quote-php   0/1     ImagePullBackOff   0          31m
+mysql       1/1     Running            0          31m
+quote-php   0/1     ErrImagePull       0          31m
+quote-php   0/1     ImagePullBackOff   0          32m
+
+^C[student@workstation multicontainer-review]$ ## had to make the repositories "public" on quay.io !!
+[student@workstation multicontainer-review]$ oc process quote-php-persistent -p RHT_OCP4_QUAY_USER=laemmerh | oc create -f -
+Error from server (AlreadyExists): error when creating "STDIN": pods "mysql" already exists
+Error from server (AlreadyExists): error when creating "STDIN": pods "quote-php" already exists
+Error from server (AlreadyExists): error when creating "STDIN": services "quote-php" already exists
+Error from server (AlreadyExists): error when creating "STDIN": services "mysql" already exists
+Error from server (AlreadyExists): error when creating "STDIN": persistentvolumeclaims "dbinit" already exists
+Error from server (AlreadyExists): error when creating "STDIN": persistentvolumeclaims "dbclaim" already exists
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc get pods -w
+NAME        READY   STATUS             RESTARTS   AGE
+mysql       1/1     Running            0          35m
+quote-php   0/1     ImagePullBackOff   0          35m
+quote-php   1/1     Running            0          36m
+
+
+^C[student@workstation multicontainer-review]$ ## now with public repositories the pull was ok
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ oc get pods
+NAME        READY   STATUS    RESTARTS   AGE
+mysql       1/1     Running   0          37m
+quote-php   1/1     Running   0          37m
+[student@workstation multicontainer-review]$ oc descibe pod quote-php
+error: unknown command "descibe" for "oc"
+
+Did you mean this?
+	describe
+[student@workstation multicontainer-review]$ oc describe pod quote-php
+Name:         quote-php
+Namespace:    qclrrk-deploy
+Priority:     0
+Node:         eu410-x8btt-worker-0-8pnk6/10.0.3.72
+Start Time:   Mon, 20 Feb 2023 03:38:24 -0500
+Labels:       app=quote-php
+              name=quote-php
+              template=quote-php-mysql-persistent-template
+Annotations:  k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "openshift-sdn",
+                    "interface": "eth0",
+                    "ips": [
+                        "10.130.2.85"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "openshift-sdn",
+                    "interface": "eth0",
+                    "ips": [
+                        "10.130.2.85"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+              kubernetes.io/limit-ranger: LimitRanger plugin set: memory request for container quote-php; memory limit for container quote-php
+              openshift.io/scc: restricted
+Status:       Running
+IP:           10.130.2.85
+IPs:
+  IP:  10.130.2.85
+Containers:
+  quote-php:
+    Container ID:   cri-o://702a3a0700662927ec61e5fe0d2559309b0558da035e4b55a2dc273d284d4e7e
+    Image:          quay.io/laemmerh/do180-quote-php
+    Image ID:       quay.io/laemmerh/do180-quote-php@sha256:a0700b0438716b995ba01021bb9f44633726e66f614a9c8b371f5b62425f04ab
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 20 Feb 2023 04:15:13 -0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  2Gi
+    Requests:
+      cpu:     500m
+      memory:  50Mi
+    Environment:
+      MYSQL_ENV_MYSQL_DATABASE:  items
+      MYSQL_ENV_MYSQL_USER:      user1
+      MYSQL_ENV_MYSQL_PASSWORD:  mypa55
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-hc7sm (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  kube-api-access-hc7sm:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+    ConfigMapName:           openshift-service-ca.crt
+    ConfigMapOptional:       <nil>
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/memory-pressure:NoSchedule op=Exists
+                             node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason          Age                 From               Message
+  ----     ------          ----                ----               -------
+  Normal   Scheduled       38m                 default-scheduler  Successfully assigned qclrrk-deploy/quote-php to eu410-x8btt-worker-0-8pnk6
+  Normal   AddedInterface  38m                 multus             Add eth0 [10.130.2.85/23] from openshift-sdn
+  Normal   Pulling         36m (x4 over 38m)   kubelet            Pulling image "quay.io/laemmerh/do180-quote-php"
+  Warning  Failed          36m (x4 over 38m)   kubelet            Failed to pull image "quay.io/laemmerh/do180-quote-php": rpc error: code = Unknown desc = reading manifest latest in quay.io/laemmerh/do180-quote-php: unauthorized: access to the requested resource is not authorized
+  Warning  Failed          36m (x4 over 38m)   kubelet            Error: ErrImagePull
+  Warning  Failed          36m (x6 over 38m)   kubelet            Error: ImagePullBackOff
+  Normal   BackOff         3m (x151 over 38m)  kubelet            Back-off pulling image "quay.io/laemmerh/do180-quote-php"
+[student@workstation multicontainer-review]$ oc describe service
+Name:              mysql
+Namespace:         qclrrk-deploy
+Labels:            app=quote-php
+                   name=mysql
+                   template=quote-php-mysql-persistent-template
+Annotations:       <none>
+Selector:          name=mysql
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                172.30.235.71
+IPs:               172.30.235.71
+Port:              <unset>  3306/TCP
+TargetPort:        3306/TCP
+Endpoints:         10.130.2.86:3306
+Session Affinity:  None
+Events:            <none>
+
+
+Name:              quote-php
+Namespace:         qclrrk-deploy
+Labels:            app=quote-php
+                   name=quote-php
+                   template=quote-php-mysql-persistent-template
+Annotations:       <none>
+Selector:          name=quote-php
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                172.30.230.55
+IPs:               172.30.230.55
+Port:              <unset>  8080/TCP
+TargetPort:        8080/TCP
+Endpoints:         10.130.2.85:8080
+Session Affinity:  None
+Events:            <none>
+[student@workstation multicontainer-review]$ oc expose svc quote-php
+route.route.openshift.io/quote-php exposed
+[student@workstation multicontainer-review]$ oc describe route
+Name:			quote-php
+Namespace:		qclrrk-deploy
+Created:		13 seconds ago
+Labels:			app=quote-php
+			name=quote-php
+			template=quote-php-mysql-persistent-template
+Annotations:		openshift.io/host.generated=true
+Requested Host:		quote-php-qclrrk-deploy.apps.eu410.prod.nextcle.com
+			   exposed on router default (host router-default.apps.eu410.prod.nextcle.com) 13 seconds ago
+Path:			<none>
+TLS Termination:	<none>
+Insecure Policy:	<none>
+Endpoint Port:		8080
+
+Service:	quote-php
+Weight:		100 (100%)
+Endpoints:	10.130.2.85:8080
+[student@workstation multicontainer-review]$ oc get route
+NAME        HOST/PORT                                             PATH   SERVICES    PORT   TERMINATION   WILDCARD
+quote-php   quote-php-qclrrk-deploy.apps.eu410.prod.nextcle.com          quote-php   8080                 None
+[student@workstation multicontainer-review]$ curl http://quote-php-qclrrk-deploy.apps.eu410.prod.nextcle.com
+Always remember that you are absolutely unique. Just like everyone else.
+[student@workstation multicontainer-review]$ curl -w http://quote-php-qclrrk-deploy.apps.eu410.prod.nextcle.com
+curl: no URL specified!
+curl: try 'curl --help' or 'curl --manual' for more information
+[student@workstation multicontainer-review]$ curl -w "\n" http://quote-php-qclrrk-deploy.apps.eu410.prod.nextcle.com
+Always remember that you are absolutely unique. Just like everyone else.
+
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ lab multicontainer-review grade
+
+Grading the student's work for Lab: Deploying Multi-container Applications
+
+• Accessing Quotes web application.............................  PASS
+
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ lab multicontainer-review finish
+
+Completing the Lab: Deploying Multi-container Applications
+
+ · Log in on OpenShift.........................................  SUCCESS
+ · Deleting the qclrrk-deploy project..........................  SUCCESS
+ · Remove local images
+ · Removing localhost/do180-mysql-80-rhel8 image...............  SUCCESS
+ · Removing localhost/do180-quote-php image....................  SUCCESS
+ · Removing quay.io/laemmerh/do180-mysql-80-rhel8 image........  SUCCESS
+ · Removing quay.io/laemmerh/do180-todonodejs image............  SUCCESS
+ · Removing registry.access.redhat.com/ubi8/ubi image..........  SUCCESS
+ · Removing registry.redhat.io/rhel8/mysql-80:1 image..........  SUCCESS
+ · Removing the project directory..............................  SUCCESS
+ · Removing the solution directory.............................  SUCCESS
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ 
+[student@workstation multicontainer-review]$ cd ..
+[student@workstation labs]$ pwd
+/home/student/DO180/labs
+[student@workstation labs]$ cd ..
+[student@workstation DO180]$ ls
+labs  solutions
+[student@workstation DO180]$ git status
+fatal: not a git repository (or any of the parent directories): .git
+[student@workstation DO180]$ cd ..
+[student@workstation ~]$ ls
+Desktop  DO180  Documents  Downloads  Music  Pictures  Public  Templates  Videos
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ git clone https://github.com/Mica1999/DO180-apps
+Cloning into 'DO180-apps'...
+remote: Enumerating objects: 95, done.
+remote: Total 95 (delta 0), reused 0 (delta 0), pack-reused 95
+Receiving objects: 100% (95/95), 251.32 KiB | 935.00 KiB/s, done.
+Resolving deltas: 100% (13/13), done.
+[student@workstation ~]$ ls 
+Desktop  DO180  DO180-apps  Documents  Downloads  Music  Pictures  Public  Templates  Videos
+[student@workstation ~]$ cd DO180-apps/
+[student@workstation DO180-apps]$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+[student@workstation DO180-apps]$ git checkout console
+Branch 'console' set up to track remote branch 'console' from 'origin'.
+Switched to a new branch 'console'
+[student@workstation DO180-apps]$ ls
+example                               exercise_webconsole.txt   nodejs-helloworld  temps
+exercise_7_7.log.txt                  lab_openshift-review.txt  php-helloworld     todoapp
+exercise_multi_container_app.log.txt  nodejs-app                README.md
+[student@workstation DO180-apps]$ ls -l
+total 56
+drwxrwxr-x. 2 student student    23 Feb 20 04:26 example
+-rw-rw-r--. 1 student student  7175 Feb 20 04:26 exercise_7_7.log.txt
+-rw-rw-r--. 1 student student 27270 Feb 20 04:26 exercise_multi_container_app.log.txt
+-rw-rw-r--. 1 student student  2607 Feb 20 04:26 exercise_webconsole.txt
+-rw-rw-r--. 1 student student 10418 Feb 20 04:26 lab_openshift-review.txt
+drwxrwxr-x. 2 student student    43 Feb 20 04:26 nodejs-app
+drwxrwxr-x. 2 student student    40 Feb 20 04:26 nodejs-helloworld
+drwxrwxr-x. 2 student student    23 Feb 20 04:26 php-helloworld
+-rw-rw-r--. 1 student student    54 Feb 20 04:26 README.md
+drwxrwxr-x. 2 student student    23 Feb 20 04:26 temps
+drwxrwxr-x. 5 student student    51 Feb 20 04:26 todoapp
+[student@workstation DO180-apps]$ 
+
