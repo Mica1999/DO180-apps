@@ -1,0 +1,274 @@
+[student@workstation ~]$ lab image-review start
+
+Setting up workstation for the Lab: Managing Images
+
+ · Checking podman configuration...............................  SUCCESS
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman pull quay.io/redhattraining/nginx:1.17
+Trying to pull quay.io/redhattraining/nginx:1.17...
+Getting image source signatures
+Copying blob b00ee4473ca6 done  
+Copying blob c78335199707 done  
+Copying blob d1a81ca518e2 done  
+Copying config 9beeba249f done  
+Writing manifest to image destination
+Storing signatures
+9beeba249f3ee158d3e495a6ac25c5667ae2de8a43ac2a8bfd2bf687a58c06c9
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                    TAG         IMAGE ID      CREATED      SIZE
+quay.io/redhattraining/nginx  1.17        9beeba249f3e  2 years ago  131 MB
+[student@workstation ~]$ podman run -d --name official-nginx -p 8080:80 quay.io/redhattraining/nginx:1.17
+cb4dd4dfb4602b8c1a999eeaeb1de11afd6af678f35b9af14981f6f8fdb8695b
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ oc get pods
+Error from server (Forbidden): pods is forbidden: User "qclrrk" cannot list resource "pods" in API group "" in the namespace "qclrrk-deploy"
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman exec -it official-nginx /bin/bash
+root@cb4dd4dfb460:/# vi /usr/share/nginx/html/
+50x.html    index.html  
+root@cb4dd4dfb460:/# vi /usr/share/nginx/html/index.html 
+bash: vi: command not found
+root@cb4dd4dfb460:/# vi /usr/share/nginx/html/index.html 
+vigr  vipw  
+root@cb4dd4dfb460:/# echo "DO180" > /usr/share/nginx/html/index.html 
+root@cb4dd4dfb460:/# exit
+exit
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ curl 127.0.0.1:8080
+DO180
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman stop official-nginx
+official-nginx
+[student@workstation ~]$ podman commit -a "laemmerh" official-nginx do180/mynginx:v1.0-SNAPSHOT
+Getting image source signatures
+Copying blob ffc9b21953f4 skipped: already exists  
+Copying blob 2f4accd375d9 skipped: already exists  
+Copying blob 6c7de695ede3 skipped: already exists  
+Copying blob c197a33ada1d done  
+Copying config b2a6d6da63 done  
+Writing manifest to image destination
+Storing signatures
+b2a6d6da639b2ab5a466c22315a7fdbbea6d3057b0b3b5fa020f06fe7b5b32b5
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                    TAG            IMAGE ID      CREATED        SIZE
+localhost/do180/mynginx       v1.0-SNAPSHOT  b2a6d6da639b  8 seconds ago  131 MB
+quay.io/redhattraining/nginx  1.17           9beeba249f3e  2 years ago    131 MB
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman run -d --name official-nginx-dev -p 8080:80 do180/mynginx:v1.0-SNAPSHOT
+44b5fc5c87ced13d7b0beda825b8e731136cdbbce6cf94acfac1f9843e021c8c
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ curl 127.0.0.1:8080
+DO180
+[student@workstation ~]$ podman exec -it official-nginx-dev /bin/bash
+root@44b5fc5c87ce:/# echo "DO180 page dev" > /usr/share/nginx/html/index.html 
+root@44b5fc5c87ce:/# exit
+exit
+[student@workstation ~]$ curl 127.0.0.1:8080
+DO180 page dev
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman stop official-nginx-dev
+official-nginx-dev
+[student@workstation ~]$ podman commit -a "laemmerh" official-nginx-dev do180/mynginx:v1.0
+Getting image source signatures
+Copying blob ffc9b21953f4 skipped: already exists  
+Copying blob 2f4accd375d9 skipped: already exists  
+Copying blob 6c7de695ede3 skipped: already exists  
+Copying blob c197a33ada1d skipped: already exists  
+Copying blob 048493c7f47a done  
+Copying config c73117101c done  
+Writing manifest to image destination
+Storing signatures
+c73117101ce23a419f13eb03af9af2db9f0a3e5feefea9d78afe8cfc6e5198fe
+[student@workstation ~]$ podman images
+REPOSITORY                    TAG            IMAGE ID      CREATED        SIZE
+localhost/do180/mynginx       v1.0           c73117101ce2  5 seconds ago  131 MB
+localhost/do180/mynginx       v1.0-SNAPSHOT  b2a6d6da639b  5 minutes ago  131 MB
+quay.io/redhattraining/nginx  1.17           9beeba249f3e  2 years ago    131 MB
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman ps
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+[student@workstation ~]$ podman ps -a
+CONTAINER ID  IMAGE                                  COMMAND               CREATED         STATUS                         PORTS                 NAMES
+cb4dd4dfb460  quay.io/redhattraining/nginx:1.17      nginx -g daemon o...  10 minutes ago  Exited (0) 7 minutes ago       0.0.0.0:8080->80/tcp  official-nginx
+44b5fc5c87ce  localhost/do180/mynginx:v1.0-SNAPSHOT  nginx -g daemon o...  4 minutes ago   Exited (0) About a minute ago  0.0.0.0:8080->80/tcp  official-nginx-dev
+[student@workstation ~]$ podman rm official-nginx-dev
+44b5fc5c87ced13d7b0beda825b8e731136cdbbce6cf94acfac1f9843e021c8c
+[student@workstation ~]$ podman ps -a
+CONTAINER ID  IMAGE                              COMMAND               CREATED         STATUS                    PORTS                 NAMES
+cb4dd4dfb460  quay.io/redhattraining/nginx:1.17  nginx -g daemon o...  11 minutes ago  Exited (0) 7 minutes ago  0.0.0.0:8080->80/tcp  official-nginx
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                    TAG            IMAGE ID      CREATED             SIZE
+localhost/do180/mynginx       v1.0           c73117101ce2  About a minute ago  131 MB
+localhost/do180/mynginx       v1.0-SNAPSHOT  b2a6d6da639b  7 minutes ago       131 MB
+quay.io/redhattraining/nginx  1.17           9beeba249f3e  2 years ago         131 MB
+[student@workstation ~]$ podman rmi do180/mynginx:v1.0-SNAPSHOT
+Untagged: localhost/do180/mynginx:v1.0-SNAPSHOT
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                    TAG         IMAGE ID      CREATED        SIZE
+localhost/do180/mynginx       v1.0        c73117101ce2  2 minutes ago  131 MB
+quay.io/redhattraining/nginx  1.17        9beeba249f3e  2 years ago    131 MB
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman run -d --name my-nginx -p 8280:80 do180/mynginx:v1.0
+3c7ab29f24e8f95fec89362717e3623c602e632ed40373c68c930fc84a418614
+[student@workstation ~]$ 
+[student@workstation ~]$ curl 127.0.0.1:8080
+curl: (7) Failed to connect to 127.0.0.1 port 8080: Connection refused
+[student@workstation ~]$ curl 127.0.0.1:8280
+DO180 page dev
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ lab image-review grade
+
+Grading the student's work for the Lab: Managing Images
+
+ · Nginx container image is pulled.............................  PASS
+ · Container official-nginx is created.........................  PASS
+ · Container official-nginx is stopped.........................  PASS
+ · Tag do180/mynginx:v1.0-SNAPSHOT is removed..................  PASS
+ · Tag do180/mynginx:v1.0 is created...........................  PASS
+ · Container my-nginx is created and running...................  PASS
+ · index.html is available with the custom content.............  FAIL
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman exec -it my-nginx /bin/bash
+root@3c7ab29f24e8:/# echo "DO180 page" > /usr/share/nginx/html/index.html
+root@3c7ab29f24e8:/# exit
+exit
+[student@workstation ~]$ curl 127.0.0.1:8280
+DO180 page
+[student@workstation ~]$ lab image-review grade
+
+Grading the student's work for the Lab: Managing Images
+
+ · Nginx container image is pulled.............................  PASS
+ · Container official-nginx is created.........................  PASS
+ · Container official-nginx is stopped.........................  PASS
+ · Tag do180/mynginx:v1.0-SNAPSHOT is removed..................  PASS
+ · Tag do180/mynginx:v1.0 is created...........................  PASS
+ · Container my-nginx is created and running...................  PASS
+ · index.html is available with the custom content.............  FAIL
+[student@workstation ~]$ ls
+Desktop  DO180  DO180-apps  Documents  Downloads  Music  Pictures  Public  Templates  Videos
+[student@workstation ~]$ ls -l DO180
+DO180/      DO180-apps/ 
+[student@workstation ~]$ ls -l DO180/
+labs/      solutions/ 
+[student@workstation ~]$ ls -l DO180/labs/
+total 0
+[student@workstation ~]$ find . -name "*image-review*"
+find: ‘./.local/share/containers/storage/overlay/661b20dfda0361650be79833840ba9ff289261855ff40f1744c43bf3de038854/diff/var/cache/apt/archives/partial’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/46e86459341f62629d982687d3d58caec452729beecde350a4a58d4e479af151/diff/var/cache/nginx/client_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/46e86459341f62629d982687d3d58caec452729beecde350a4a58d4e479af151/diff/var/cache/nginx/proxy_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/46e86459341f62629d982687d3d58caec452729beecde350a4a58d4e479af151/diff/var/cache/nginx/fastcgi_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/46e86459341f62629d982687d3d58caec452729beecde350a4a58d4e479af151/diff/var/cache/nginx/uwsgi_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/46e86459341f62629d982687d3d58caec452729beecde350a4a58d4e479af151/diff/var/cache/nginx/scgi_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/46e86459341f62629d982687d3d58caec452729beecde350a4a58d4e479af151/work/work’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/9de9899b7262ed61d67255028fecd4ab1d4ba7ec1cf5495356a4e54737e85df3/diff/var/cache/nginx/client_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/9de9899b7262ed61d67255028fecd4ab1d4ba7ec1cf5495356a4e54737e85df3/diff/var/cache/nginx/fastcgi_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/9de9899b7262ed61d67255028fecd4ab1d4ba7ec1cf5495356a4e54737e85df3/diff/var/cache/nginx/proxy_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/9de9899b7262ed61d67255028fecd4ab1d4ba7ec1cf5495356a4e54737e85df3/diff/var/cache/nginx/scgi_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/9de9899b7262ed61d67255028fecd4ab1d4ba7ec1cf5495356a4e54737e85df3/diff/var/cache/nginx/uwsgi_temp’: Permission denied
+find: ‘./.local/share/containers/storage/overlay/33cd97b5433f72f58b6f4ee7d5c68019fb8f63ab69f012353212d3ba87260b4b/work/work’: Permission denied
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ cd /usr/local/lib
+[student@workstation lib]$ ls 
+lab-image-operations  lab-multicontainer-review  labtool.shlib
+lab-image-review      labtool.do180.shlib
+[student@workstation lib]$ vi
+vi                  vipw                virtnetworkd        virtsecretd
+view                virt-admin          virtnodedevd        virt-ssh-helper
+vigr                virt-host-validate  virtnwfilterd       virtstoraged
+vim                 virtinterfaced      virtproxyd          virt-what
+vimdiff             virtlockd           virtqemud           visudo
+vimtutor            virtlogd            virt-qemu-run       
+[student@workstation lib]$ vi lab-image-review 
+[student@workstation lib]$ 
+[student@workstation lib]$ curl  --silent 127.0.0.1:8280  | grep Page &> /dev/null
+[student@workstation lib]$ echo $?
+1
+[student@workstation lib]$ curl  --silent 127.0.0.1:8280  | grep Page 
+[student@workstation lib]$ curl 127.0.0.1:8280  | grep Page 
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    11  100    11    0     0  11000      0 --:--:-- --:--:-- --:--:-- 11000
+[student@workstation lib]$ curl 127.0.0.1:8280 
+DO180 page
+[student@workstation lib]$ podman exec -it my-nginx /bin/bash
+root@3c7ab29f24e8:/# echo "DO180 Page not page" > /usr/share/nginx/html/index.html 
+root@3c7ab29f24e8:/# exit
+exit
+[student@workstation lib]$ 
+[student@workstation lib]$ 
+[student@workstation lib]$ 
+[student@workstation lib]$ lab image-review grade
+
+Grading the student's work for the Lab: Managing Images
+
+ · Nginx container image is pulled.............................  PASS
+ · Container official-nginx is created.........................  PASS
+ · Container official-nginx is stopped.........................  PASS
+ · Tag do180/mynginx:v1.0-SNAPSHOT is removed..................  PASS
+ · Tag do180/mynginx:v1.0 is created...........................  PASS
+ · Container my-nginx is created and running...................  PASS
+ · index.html is available with the custom content.............  PASS
+[student@workstation lib]$ 
+[student@workstation lib]$ 
+[student@workstation lib]$ lab image-review finish
+
+Completing the Lab: Managing Images
+
+ · Stopping official-nginx-dev container.......................  SUCCESS
+ · Removing official-nginx-dev container.......................  SUCCESS
+ · Stopping official-nginx container...........................  SUCCESS
+ · Removing official-nginx container...........................  SUCCESS
+ · Removing do180/mynginx:v1.0 image...........................  SUCCESS
+ · Removing quay.io/redhattraining/nginx:1.17 image............  SUCCESS
+[student@workstation lib]$ 
+
