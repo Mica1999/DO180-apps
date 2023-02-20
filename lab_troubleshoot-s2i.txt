@@ -1,0 +1,525 @@
+  oc adm policy add-scc-to-user SCC (USER | -z SERVICEACCOUNT) [USER ...]
+[flags]
+
+Examples:
+  # Add the 'restricted' security context constraint to user1 and user2
+  oc adm policy add-scc-to-user restricted user1 user2
+  
+  # Add the 'privileged' security context constraint to serviceaccount1 in the
+current namespace
+  oc adm policy add-scc-to-user privileged -z serviceaccount1
+
+Options:
+      --allow-missing-template-keys=true: If true, ignore any errors in
+templates when a field or map key is missing in the template. Only applies to
+golang and jsonpath output formats.
+      --dry-run='none': Must be "none", "server", or "client". If client
+strategy, only print the object that would be sent, without sending it. If
+server strategy, submit server-side request without persisting the resource.
+  -o, --output='': Output format. One of:
+json|yaml|name|go-template|go-template-file|template|templatefile|jsonpath|jsonpath-as-json|jsonpath-file.
+  -z, --serviceaccount=[]: service account in the current namespace to use as a
+user
+      --show-managed-fields=false: If true, keep the managedFields when printing
+objects in JSON or YAML format.
+      --template='': Template string or path to template file to use when
+-o=go-template, -o=go-template-file. The template format is golang templates
+[http://golang.org/pkg/text/template/#pkg-overview].
+
+Use "oc adm options" for a list of global command-line options (applies to all
+commands).
+[student@workstation ~]$ clear
+
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ lab troubleshoot-s2i start
+
+Checking prerequisites for Guided Exercise: Troubleshooting an OpenShift Build
+
+ Checking local clone of the applications repository:
+ · Folder '/home/student/DO180-apps' is a git repo.............  SUCCESS
+ · Git repo '/home/student/DO180-apps' has no pending changes..  SUCCESS
+ · Project 'nodejs-helloworld' exists in student's GitHub fork.  SUCCESS
+ Checking for conflicts with existing OpenShift projects:
+ · Project 'qclrrk-nodejs' is absent...........................  SUCCESS
+ Checking for conflicts with existing local containers:
+ · Container 'test' is absent..................................  SUCCESS
+ Verifying the OpenShift cluster is running:
+ · Log in on OpenShift.........................................  SUCCESS
+ · Check the internal registry is up and running...............  SUCCESS
+
+Setting up the classroom for Guided Exercise: Troubleshooting an OpenShift Build
+
+ · Downloading starter project.................................  SUCCESS
+ · Downloading solution project................................  SUCCESS
+
+Setup successful. Please proceed with the exercise.
+
+
+Overall start status...........................................  SUCCESS
+
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ source /usr/local/etc/ocp4.config
+[student@workstation ~]$ cd DO180-apps/
+[student@workstation DO180-apps]$ git checkout master
+Switched to branch 'master'
+Your branch is up to date with 'origin/master'.
+[student@workstation DO180-apps]$ git checkout -b troubleshhot-s2i
+Switched to a new branch 'troubleshhot-s2i'
+[student@workstation DO180-apps]$ git push -u origin troubleshoot-s2i
+error: src refspec troubleshoot-s2i does not match any
+error: failed to push some refs to 'https://github.com/Mica1999/DO180-apps'
+[student@workstation DO180-apps]$ git push origin troubleshoot-s2i
+error: src refspec troubleshoot-s2i does not match any
+error: failed to push some refs to 'https://github.com/Mica1999/DO180-apps'
+[student@workstation DO180-apps]$ git status
+On branch troubleshhot-s2i
+nothing to commit, working tree clean
+[student@workstation DO180-apps]$ git checkout master
+Switched to branch 'master'
+Your branch is up to date with 'origin/master'.
+[student@workstation DO180-apps]$ gibt branch --delete troubleshhot-s2i
+bash: gibt: command not found...
+[student@workstation DO180-apps]$ git branch --delete troubleshhot-s2i
+Deleted branch troubleshhot-s2i (was f7cd896).
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ git checkout -b troubleshoot-s2i
+Switched to a new branch 'troubleshoot-s2i'
+[student@workstation DO180-apps]$ git push -u origin troubleshoot-s2i
+Gtk-Message: 10:20:17.207: Failed to load module "canberra-gtk-module"
+Gtk-Message: 10:20:22.660: Failed to load module "canberra-gtk-module"
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+remote: 
+remote: Create a pull request for 'troubleshoot-s2i' on GitHub by visiting:
+remote:      https://github.com/Mica1999/DO180-apps/pull/new/troubleshoot-s2i
+remote: 
+To https://github.com/Mica1999/DO180-apps
+ * [new branch]      troubleshoot-s2i -> troubleshoot-s2i
+Branch 'troubleshoot-s2i' set up to track remote branch 'troubleshoot-s2i' from 'origin'.
+[student@workstation DO180-apps]$ oc login -u "${RHT_OCP4_DEV_USER}" -p "${RHT_OCP4_DEV_PASSWORD}" "${RHT_OCP4_MASTER_API}"
+Login successful.
+
+You don't have any projects. You can try to create a new project, by running
+
+    oc new-project <projectname>
+
+[student@workstation DO180-apps]$ oc new-project ${RHT_OCP4_DEV_USER}-nodejs
+Now using project "qclrrk-nodejs" on server "https://api.eu410.prod.nextcle.com:6443".
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    oc new-app rails-postgresql-example
+
+to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
+
+    kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
+
+[student@workstation DO180-apps]$ podman ps
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+[student@workstation DO180-apps]$ podman ps -a
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc new-app --context-dir=nodejs-helloworld https://github.com/Mica1999/DO180-apps#troubleshoot-s2i -i nodejs:16-ubi8 --name nodejs-hellp --build-env npm_config_registry=http://${RHT_OCP4_NEXUS_SERVER}/repository/nodejs
+--> Found image dfd08e2 (11 months old) in image stream "openshift/nodejs" under tag "16-ubi8" for "nodejs:16-ubi8"
+
+    Node.js 16 
+    ---------- 
+    Node.js 16 available as container is a base platform for building and running various Node.js 16 applications and frameworks. Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.
+
+    Tags: builder, nodejs, nodejs16
+
+    * The source repository appears to match: nodejs
+    * A source build using source code from https://github.com/Mica1999/DO180-apps#troubleshoot-s2i will be created
+      * The resulting image will be pushed to image stream tag "nodejs-hellp:latest"
+      * Use 'oc start-build' to trigger a new build
+
+--> Creating resources ...
+    imagestream.image.openshift.io "nodejs-hellp" created
+    buildconfig.build.openshift.io "nodejs-hellp" created
+    deployment.apps "nodejs-hellp" created
+    service "nodejs-hellp" created
+--> Success
+    Build scheduled, use 'oc logs -f buildconfig/nodejs-hellp' to track its progress.
+    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
+     'oc expose service/nodejs-hellp' 
+    Run 'oc status' to view your app.
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc get pods -w
+NAME                   READY   STATUS   RESTARTS   AGE
+nodejs-hellp-1-build   0/1     Error    0          69s
+^C[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc logs bc/nodejs-hellp-1-build
+Error from server (NotFound): buildconfigs.build.openshift.io "nodejs-hellp-1-build" not found
+[student@workstation DO180-apps]$ oc logs bc/nodejs-hellp
+Cloning "https://github.com/Mica1999/DO180-apps" ...
+	Commit:	f7cd8963ef353d9173c3a21dcccf402f3616840b (Initial commit, including all apps previously in course)
+	Author:	Jordi Sola <someth2say@gmail.com>
+	Date:	Fri Oct 4 13:04:03 2019 +0200
+time="2023-02-20T15:27:19Z" level=info msg="Not using native diff for overlay, this may cause degraded performance for building images: kernel has CONFIG_OVERLAY_FS_REDIRECT_DIR enabled"
+I0220 15:27:19.925325       1 defaults.go:102] Defaulting to storage driver "overlay" with options [mountopt=metacopy=on].
+Caching blobs under "/var/cache/blobs".
+Trying to pull image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb...
+Getting image source signatures
+Copying blob sha256:db75fb66b7757bf7e48909dc7904b4956ab642d5f1d47ddf008855a2f0d7e574
+Copying blob sha256:950c796b5dbc22ecb4f4bd661013c9286715d238a0dbdd9b7ed1406c395086a1
+Copying blob sha256:8dfe9326f733b815c486432e93e0a97f03e90e7cc35def9511cd1efa7f917f56
+Copying blob sha256:0d875a68bf996a2e45cd381e8eb3c8b1efa6191d8e3f6ec98be685c7e9823815
+Copying config sha256:dfd08e2f2735ebcde1863a8446490a6460995b8843cb9cf2c1f2f55a510551eb
+Writing manifest to image destination
+Storing signatures
+Generating dockerfile with builder image image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb
+Adding transient rw bind mount for /run/secrets/rhsm
+STEP 1/9: FROM image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb
+STEP 2/9: LABEL "io.openshift.build.image"="image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb"       "io.openshift.build.commit.author"="Jordi Sola <someth2say@gmail.com>"       "io.openshift.build.commit.date"="Fri Oct 4 13:04:03 2019 +0200"       "io.openshift.build.commit.id"="f7cd8963ef353d9173c3a21dcccf402f3616840b"       "io.openshift.build.commit.ref"="troubleshoot-s2i"       "io.openshift.build.commit.message"="Initial commit, including all apps previously in course"       "io.openshift.build.source-location"="https://github.com/Mica1999/DO180-apps"       "io.openshift.build.source-context-dir"="nodejs-helloworld"
+STEP 3/9: ENV OPENSHIFT_BUILD_NAME="nodejs-hellp-1"     OPENSHIFT_BUILD_NAMESPACE="qclrrk-nodejs"     OPENSHIFT_BUILD_SOURCE="https://github.com/Mica1999/DO180-apps"     OPENSHIFT_BUILD_REFERENCE="troubleshoot-s2i"     OPENSHIFT_BUILD_COMMIT="f7cd8963ef353d9173c3a21dcccf402f3616840b"     npm_config_registry="http://nexus-common.apps.eu410.prod.nextcle.com/repository/nodejs"
+STEP 4/9: USER root
+STEP 5/9: COPY upload/src /tmp/src
+STEP 6/9: RUN chown -R 1001:0 /tmp/src
+STEP 7/9: USER 1001
+STEP 8/9: RUN /usr/libexec/s2i/assemble
+---> Installing application source ...
+---> Installing all dependencies
+npm ERR! code ETARGET
+npm ERR! notarget No matching version found for express@~4.14.2.
+npm ERR! notarget In most cases you or one of your dependencies are requesting
+npm ERR! notarget a package version that doesn't exist.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /opt/app-root/src/.npm/_logs/2023-02-20T15_27_39_705Z-debug.log
+error: build error: error building at STEP "RUN /usr/libexec/s2i/assemble": error while running runtime: exit status 1
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ vim nodejs-helloworld/package.json 
+[student@workstation DO180-apps]$ git commit -am "Fixed Express release dependency"
+[troubleshoot-s2i e47cfb8] Fixed Express release dependency
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+[student@workstation DO180-apps]$ git push
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 409 bytes | 409.00 KiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/Mica1999/DO180-apps
+   f7cd896..e47cfb8  troubleshoot-s2i -> troubleshoot-s2i
+[student@workstation DO180-apps]$ oc get pods -w
+NAME                   READY   STATUS   RESTARTS   AGE
+nodejs-hellp-1-build   0/1     Error    0          7m22s
+^C[student@workstation DO180-apps]$ oc start-build nodejs-hellp
+build.build.openshift.io/nodejs-hellp-2 started
+[student@workstation DO180-apps]$ oc get pods -w
+NAME                   READY   STATUS     RESTARTS   AGE
+nodejs-hellp-1-build   0/1     Error      0          7m56s
+nodejs-hellp-2-build   0/1     Init:0/2   0          4s
+nodejs-hellp-2-build   0/1     Init:0/2   0          4s
+nodejs-hellp-2-build   0/1     Init:1/2   0          10s
+nodejs-hellp-2-build   0/1     PodInitializing   0          11s
+nodejs-hellp-2-build   1/1     Running           0          12s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Pending           0          0s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Pending           0          1s
+nodejs-hellp-568c676bdf-xwmd7   0/1     ContainerCreating   0          1s
+nodejs-hellp-2-build            0/1     Completed           0          38s
+nodejs-hellp-568c676bdf-xwmd7   0/1     ContainerCreating   0          3s
+nodejs-hellp-568c676bdf-xwmd7   1/1     Running             0          4s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Error               0          5s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Error               1 (2s ago)   6s
+nodejs-hellp-568c676bdf-xwmd7   0/1     CrashLoopBackOff    1 (2s ago)   7s
+^C[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc logs -f bc/nodejs-hellp
+Cloning "https://github.com/Mica1999/DO180-apps" ...
+	Commit:	e47cfb895988ff930b93d0ae42c31518e5beb9a4 (Fixed Express release dependency)
+	Author:	Student User <student@workstation.lab.example.com>
+	Date:	Mon Feb 20 10:34:15 2023 -0500
+time="2023-02-20T15:35:11Z" level=info msg="Not using native diff for overlay, this may cause degraded performance for building images: kernel has CONFIG_OVERLAY_FS_REDIRECT_DIR enabled"
+I0220 15:35:11.451324       1 defaults.go:102] Defaulting to storage driver "overlay" with options [mountopt=metacopy=on].
+Caching blobs under "/var/cache/blobs".
+Trying to pull image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb...
+Getting image source signatures
+Copying blob sha256:8dfe9326f733b815c486432e93e0a97f03e90e7cc35def9511cd1efa7f917f56
+Copying blob sha256:950c796b5dbc22ecb4f4bd661013c9286715d238a0dbdd9b7ed1406c395086a1
+Copying blob sha256:0d875a68bf996a2e45cd381e8eb3c8b1efa6191d8e3f6ec98be685c7e9823815
+Copying blob sha256:db75fb66b7757bf7e48909dc7904b4956ab642d5f1d47ddf008855a2f0d7e574
+Copying config sha256:dfd08e2f2735ebcde1863a8446490a6460995b8843cb9cf2c1f2f55a510551eb
+Writing manifest to image destination
+Storing signatures
+Generating dockerfile with builder image image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb
+Adding transient rw bind mount for /run/secrets/rhsm
+STEP 1/9: FROM image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb
+STEP 2/9: LABEL "io.openshift.build.source-location"="https://github.com/Mica1999/DO180-apps"       "io.openshift.build.source-context-dir"="nodejs-helloworld"       "io.openshift.build.image"="image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:2d4df5e2be090879e4947c396475c078bae495c85d02ab3d953ed8cdc806aecb"       "io.openshift.build.commit.author"="Student User <student@workstation.lab.example.com>"       "io.openshift.build.commit.date"="Mon Feb 20 10:34:15 2023 -0500"       "io.openshift.build.commit.id"="e47cfb895988ff930b93d0ae42c31518e5beb9a4"       "io.openshift.build.commit.ref"="troubleshoot-s2i"       "io.openshift.build.commit.message"="Fixed Express release dependency"
+STEP 3/9: ENV OPENSHIFT_BUILD_NAME="nodejs-hellp-2"     OPENSHIFT_BUILD_NAMESPACE="qclrrk-nodejs"     OPENSHIFT_BUILD_SOURCE="https://github.com/Mica1999/DO180-apps"     OPENSHIFT_BUILD_REFERENCE="troubleshoot-s2i"     OPENSHIFT_BUILD_COMMIT="e47cfb895988ff930b93d0ae42c31518e5beb9a4"     npm_config_registry="http://nexus-common.apps.eu410.prod.nextcle.com/repository/nodejs"
+STEP 4/9: USER root
+STEP 5/9: COPY upload/src /tmp/src
+STEP 6/9: RUN chown -R 1001:0 /tmp/src
+STEP 7/9: USER 1001
+STEP 8/9: RUN /usr/libexec/s2i/assemble
+---> Installing application source ...
+---> Installing all dependencies
+
+added 43 packages in 2s
+---> Building in production mode
+---> Pruning the development dependencies
+
+up to date in 411ms
+/opt/app-root/src/.npm is not a mountpoint
+---> Cleaning the npm cache /opt/app-root/src/.npm
+/tmp is not a mountpoint
+---> Cleaning the /tmp/npm-*
+STEP 9/9: CMD /usr/libexec/s2i/run
+COMMIT temp.builder.openshift.io/qclrrk-nodejs/nodejs-hellp-2:c50d65fe
+time="2023-02-20T15:35:35Z" level=warning msg="Adding metacopy option, configured globally"
+Getting image source signatures
+Copying blob sha256:7699752e6ed63eef234d2736d4e37159a433e18e06cd617e254299f324f41797
+Copying blob sha256:c8013a2772b6673d9b750b6407d4ac4f525a47bb2a5b5bf09ba9bf8e10aea3fc
+Copying blob sha256:346bf184426f05ded9d667abafcba7ba46e36cb00e849117e64ec8110f058052
+Copying blob sha256:b1811b61c2b3ff3ee358d781c5443ad956861eb9cb9832dfc08ecc48d67c9a45
+Copying blob sha256:81a8621783f3e63c41ea00fff4571e5f0c8e4666c97424b87c6e40353dd7c224
+Copying config sha256:cc9bf860b1a66b54b648c8ec402e8d6d2d725d6d4dae0f8531f05ba5230064c4
+Writing manifest to image destination
+Storing signatures
+--> cc9bf860b1a
+Successfully tagged temp.builder.openshift.io/qclrrk-nodejs/nodejs-hellp-2:c50d65fe
+cc9bf860b1a66b54b648c8ec402e8d6d2d725d6d4dae0f8531f05ba5230064c4
+
+Pushing image image-registry.openshift-image-registry.svc:5000/qclrrk-nodejs/nodejs-hellp:latest ...
+Getting image source signatures
+Copying blob sha256:81a8621783f3e63c41ea00fff4571e5f0c8e4666c97424b87c6e40353dd7c224
+Copying blob sha256:8dfe9326f733b815c486432e93e0a97f03e90e7cc35def9511cd1efa7f917f56
+Copying blob sha256:db75fb66b7757bf7e48909dc7904b4956ab642d5f1d47ddf008855a2f0d7e574
+Copying blob sha256:950c796b5dbc22ecb4f4bd661013c9286715d238a0dbdd9b7ed1406c395086a1
+Copying blob sha256:0d875a68bf996a2e45cd381e8eb3c8b1efa6191d8e3f6ec98be685c7e9823815
+Copying config sha256:cc9bf860b1a66b54b648c8ec402e8d6d2d725d6d4dae0f8531f05ba5230064c4
+Writing manifest to image destination
+Storing signatures
+Successfully pushed image-registry.openshift-image-registry.svc:5000/qclrrk-nodejs/nodejs-hellp@sha256:46f1959ba43d885b93a14c8fb4e67fb131485fd70ca7deeb7c8fedd31a0cfabe
+Push successful
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc logs nodejs-hellp-568c676bdf-xwmd7
+Environment: 
+	DEV_MODE=false
+	NODE_ENV=production
+	DEBUG_PORT=5858
+Launching via npm...
+npm info using npm@8.1.2
+npm info using node@v16.13.1
+npm timing npm:load:whichnode Completed in 0ms
+npm timing config:load:defaults Completed in 1ms
+npm timing config:load:file:/usr/lib/node_modules/npm/npmrc Completed in 1ms
+npm timing config:load:builtin Completed in 2ms
+npm timing config:load:cli Completed in 3ms
+npm timing config:load:env Completed in 0ms
+npm timing config:load:project Completed in 1ms
+npm timing config:load:file:/opt/app-root/src/.npmrc Completed in 0ms
+npm timing config:load:user Completed in 0ms
+npm timing config:load:file:/opt/app-root/src/.npm-global/etc/npmrc Completed in 0ms
+npm timing config:load:global Completed in 0ms
+npm timing config:load:validate Completed in 1ms
+npm timing config:load:credentials Completed in 2ms
+npm timing config:load:setEnvs Completed in 0ms
+npm timing config:load Completed in 12ms
+npm timing npm:load:configload Completed in 12ms
+npm timing npm:load:setTitle Completed in 0ms
+npm timing npm:load:setupLog Completed in 0ms
+npm timing config:load:flatten Completed in 3ms
+npm timing npm:load:cleanupLog Completed in 2ms
+npm timing npm:load:configScope Completed in 0ms
+npm timing npm:load:projectScope Completed in 0ms
+npm timing npm:load Completed in 21ms
+npm timing command:run-script Completed in 28ms
+npm ERR! Missing script: "start"
+npm ERR! 
+npm ERR! Did you mean one of these?
+npm ERR!     npm star # Mark your favorite packages
+npm ERR!     npm stars # View packages marked as favorites
+npm ERR! 
+npm ERR! To see a list of scripts, run:
+npm ERR!   npm run
+npm timing npm Completed in 208ms
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /opt/app-root/src/.npm/_logs/2023-02-20T15_37_16_381Z-debug.log
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ vim nodejs-helloworld/package.json 
+[student@workstation DO180-apps]$ git commit -am "Add start Script"
+[troubleshoot-s2i 00cd7aa] Add start Script
+ 1 file changed, 1 insertion(+)
+[student@workstation DO180-apps]$ git push
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 419 bytes | 419.00 KiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/Mica1999/DO180-apps
+   e47cfb8..00cd7aa  troubleshoot-s2i -> troubleshoot-s2i
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc start-build bc/nodejs-hellp
+build.build.openshift.io/nodejs-hellp-3 started
+[student@workstation DO180-apps]$ oc get pods -w
+NAME                            READY   STATUS             RESTARTS      AGE
+nodejs-hellp-1-build            0/1     Error              0             14m
+nodejs-hellp-2-build            0/1     Completed          0             6m49s
+nodejs-hellp-3-build            0/1     Init:0/2           0             4s
+nodejs-hellp-568c676bdf-xwmd7   0/1     CrashLoopBackOff   6 (20s ago)   6m12s
+nodejs-hellp-3-build            0/1     Init:1/2           0             9s
+nodejs-hellp-3-build            0/1     PodInitializing    0             10s
+nodejs-hellp-3-build            1/1     Running            0             11s
+nodejs-hellp-6dd4bb984b-svvfq   0/1     Pending            0             0s
+nodejs-hellp-6dd4bb984b-svvfq   0/1     Pending            0             0s
+nodejs-hellp-6dd4bb984b-svvfq   0/1     ContainerCreating   0             0s
+nodejs-hellp-3-build            0/1     Completed           0             37s
+nodejs-hellp-6dd4bb984b-svvfq   0/1     ContainerCreating   0             2s
+nodejs-hellp-6dd4bb984b-svvfq   1/1     Running             0             3s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Terminating         6 (56s ago)   6m48s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Terminating         6             6m48s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Terminating         6             6m49s
+nodejs-hellp-568c676bdf-xwmd7   0/1     Terminating         6             6m49s
+^C[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc logs nodejs-hellp-568c676bdf-xwmd7 
+Error from server (NotFound): pods "nodejs-hellp-568c676bdf-xwmd7" not found
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc logs nodejs-hellp-6dd4bb984b-svvfq
+Environment: 
+	DEV_MODE=false
+	NODE_ENV=production
+	DEBUG_PORT=5858
+Launching via npm...
+npm info using npm@8.1.2
+npm info using node@v16.13.1
+npm timing npm:load:whichnode Completed in 0ms
+npm timing config:load:defaults Completed in 2ms
+npm timing config:load:file:/usr/lib/node_modules/npm/npmrc Completed in 2ms
+npm timing config:load:builtin Completed in 2ms
+npm timing config:load:cli Completed in 3ms
+npm timing config:load:env Completed in 1ms
+npm timing config:load:project Completed in 1ms
+npm timing config:load:file:/opt/app-root/src/.npmrc Completed in 0ms
+npm timing config:load:user Completed in 0ms
+npm timing config:load:file:/opt/app-root/src/.npm-global/etc/npmrc Completed in 1ms
+npm timing config:load:global Completed in 1ms
+npm timing config:load:validate Completed in 1ms
+npm timing config:load:credentials Completed in 2ms
+npm timing config:load:setEnvs Completed in 1ms
+npm timing config:load Completed in 14ms
+npm timing npm:load:configload Completed in 14ms
+npm timing npm:load:setTitle Completed in 0ms
+npm timing npm:load:setupLog Completed in 1ms
+npm timing config:load:flatten Completed in 3ms
+npm timing npm:load:cleanupLog Completed in 3ms
+npm timing npm:load:configScope Completed in 0ms
+npm timing npm:load:projectScope Completed in 1ms
+npm timing npm:load Completed in 25ms
+
+> nodejs-helloworld@1.0.0 start
+> node app.js
+
+Example app listening on port 8080!
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc expose svc/nodejs-hellp
+route.route.openshift.io/nodejs-hellp exposed
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ oc get route -o yaml
+apiVersion: v1
+items:
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: "2023-02-20T15:44:23Z"
+    labels:
+      app: nodejs-hellp
+      app.kubernetes.io/component: nodejs-hellp
+      app.kubernetes.io/instance: nodejs-hellp
+      app.kubernetes.io/name: nodejs
+    name: nodejs-hellp
+    namespace: qclrrk-nodejs
+    resourceVersion: "274202143"
+    uid: 4c71c5d7-12ff-4ba0-80fc-2e9bd1e25253
+  spec:
+    host: nodejs-hellp-qclrrk-nodejs.apps.eu410.prod.nextcle.com
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: nodejs-hellp
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2023-02-20T15:44:23Z"
+        status: "True"
+        type: Admitted
+      host: nodejs-hellp-qclrrk-nodejs.apps.eu410.prod.nextcle.com
+      routerCanonicalHostname: router-default.apps.eu410.prod.nextcle.com
+      routerName: default
+      wildcardPolicy: None
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+[student@workstation DO180-apps]$ curl http://nodejs-hellp-qclrrk-nodejs.apps.eu410.prod.nextcle.com
+Hello World![student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ 
+[student@workstation DO180-apps]$ lab troubleshoot-s2i finish
+
+Completing the Guided Exercise: Troubleshooting an OpenShift Build
+
+ · Log in on OpenShift.........................................  SUCCESS
+ · Deleting the 'qclrrk-nodejs' OpenShift project..............  SUCCESS
+[student@workstation DO180-apps]$ 
+
