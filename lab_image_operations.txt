@@ -1,0 +1,157 @@
+[student@workstation ~]$ lab image-operations start
+
+Setting up workstation for the GE: Creating a Custom Apache Container Image
+
+ · Checking podman configuration...............................  SUCCESS
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman login quay.io
+Authenticating with existing credentials for quay.io
+Existing credentials are valid. Already logged in to quay.io
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman run -d --name official-httpd -p 8180:80 quay.io/redhattraining/httpd-parent
+Trying to pull quay.io/redhattraining/httpd-parent:latest...
+Getting image source signatures
+Copying blob a3ed95caeb02 done  
+Copying blob 6a5240d60dc4 done  
+Copying blob a3ed95caeb02 done  
+Copying blob a3ed95caeb02 done  
+Copying blob 08b8c9fdec44 done  
+Copying blob a3ed95caeb02 skipped: already exists  
+Copying blob a3ed95caeb02 skipped: already exists  
+Copying blob a3ed95caeb02 skipped: already exists  
+Copying blob 787f47dbeaac done  
+Copying blob 408208567b9a done  
+Writing manifest to image destination
+Storing signatures
+5a9cb7583906edfa725235a21ff59ab07cdea6dcf3e3822045cc7fdd30691392
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman exec -it official-httpd /bin/bash
+bash-4.4# echo "DO180 Page" > /var/www/html/do180.html
+bash-4.4# exit
+exit
+[student@workstation ~]$ curl 127.0.0.1:8180/do180.html
+DO180 Page
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman diff official-httpd
+C /root
+A /root/.bash_history
+C /run/httpd
+A /run/httpd/cgisock.1
+A /run/httpd/httpd.pid
+C /tmp
+C /var
+C /var/log
+C /var/log/httpd
+A /var/log/httpd/access_log
+A /var/log/httpd/error_log
+C /var/www
+C /var/www/html
+A /var/www/html/do180.html
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman get pods
+Error: unrecognized command `podman get`
+Try 'podman --help' for more information.
+[student@workstation ~]$ podman get pod
+Error: unrecognized command `podman get`
+Try 'podman --help' for more information.
+[student@workstation ~]$ podman stop official-httpd
+official-httpd
+[student@workstation ~]$ podman commit -a 'laemmerh' official-httpd do180-custom-httpd
+Getting image source signatures
+Copying blob 24d85c895b6b skipped: already exists  
+Copying blob c613b100be16 skipped: already exists  
+Copying blob 574bcc187eda skipped: already exists  
+Copying blob 7f9108fde4a1 skipped: already exists  
+Copying blob cea65dd22116 done  
+Copying config f4cc0f66db done  
+Writing manifest to image destination
+Storing signatures
+f4cc0f66db2022dff25330526b0fc2bf410e18a28c259af50ef0ab835c0d83ae
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                           TAG         IMAGE ID      CREATED         SIZE
+localhost/do180-custom-httpd         latest      f4cc0f66db20  11 seconds ago  236 MB
+quay.io/redhattraining/httpd-parent  latest      4346d3cace25  3 years ago     236 MB
+[student@workstation ~]$ 
+[student@workstation ~]$ podman tag do180-custom-httpd quay.io/laemmerh/o180-custom-httpd:v1.0
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                           TAG         IMAGE ID      CREATED        SIZE
+localhost/do180-custom-httpd         latest      f4cc0f66db20  2 minutes ago  236 MB
+quay.io/laemmerh/o180-custom-httpd   v1.0        f4cc0f66db20  2 minutes ago  236 MB
+quay.io/redhattraining/httpd-parent  latest      4346d3cace25  3 years ago    236 MB
+[student@workstation ~]$ podman push  quay.io/laemmerh/o180-custom-httpd:v1.0
+Getting image source signatures
+Copying blob cea65dd22116 done  
+Copying blob 24d85c895b6b skipped: already exists  
+Copying blob c613b100be16 skipped: already exists  
+Copying blob 574bcc187eda skipped: already exists  
+Copying blob 7f9108fde4a1 skipped: already exists  
+Copying config f4cc0f66db done  
+Writing manifest to image destination
+Storing signatures
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman pull quay.io/laemmerh/do180-custom-httpd:v1.0
+Trying to pull quay.io/laemmerh/do180-custom-httpd:v1.0...
+Getting image source signatures
+Copying blob 6a5240d60dc4 skipped: already exists  
+Copying blob 787f47dbeaac skipped: already exists  
+Copying blob 08b8c9fdec44 skipped: already exists  
+Copying blob 408208567b9a skipped: already exists  
+Copying blob 8803d265127d done  
+Copying config d4af7eabc4 done  
+Writing manifest to image destination
+Storing signatures
+d4af7eabc400915874745035f601fd51b865fc3d7707034f8ccb468c0a1020b5
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                           TAG         IMAGE ID      CREATED        SIZE
+localhost/do180-custom-httpd         latest      f4cc0f66db20  5 minutes ago  236 MB
+quay.io/laemmerh/o180-custom-httpd   v1.0        f4cc0f66db20  5 minutes ago  236 MB
+quay.io/laemmerh/do180-custom-httpd  v1.0        d4af7eabc400  6 weeks ago    236 MB
+quay.io/redhattraining/httpd-parent  latest      4346d3cace25  3 years ago    236 MB
+[student@workstation ~]$ podman run -d --name test-httpd -p 8280:80 uay.io/laemmerh/do180-custom-httpd:v1.0
+Trying to pull uay.io/laemmerh/do180-custom-httpd:v1.0...
+Error: initializing image from source docker://uay.io/laemmerh/do180-custom-httpd:v1.0: invalid character '<' looking for beginning of value
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman run -d --name test-httpd -p 8280:80 quay.io/laemmerh/do180-custom-httpd:v1.0
+3950282e26ce6d3b0319f3b12b5d1a47fc63b5e460ea0aaa0834590917068e09
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ curl 127.0.0.1:8280/do180.html
+DO180 Page!
+[student@workstation ~]$ lab image-operations finish
+
+Completing the GE: Creating a Custom Apache Container Image
+
+ · Stopping official-httpd container...........................  SUCCESS
+ · Removing official-httpd container...........................  SUCCESS
+ · Stopping test-httpd container...............................  SUCCESS
+ · Removing test-httpd container...............................  SUCCESS
+ · Removing redhattraining/httpd-parent image..................  SUCCESS
+ · Removing quay.io/laemmerh/do180-custom-httpd image..........  SUCCESS
+ · Removing localhost/do180-custom-httpd image.................  SUCCESS
+[student@workstation ~]$ 
+
